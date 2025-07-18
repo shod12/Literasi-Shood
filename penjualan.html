@@ -4,44 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Penjualan - Koperasi Mahida</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         :root {
-            --gold: #D4AF37;
-            --dark-gold: #B8860B;
-            --light-gold: #FFD700;
-            --cream: #FFF8E1;
-            --dark: #2C2416;
-            --light: #FFFFFF;
-            --shadow: rgba(0, 0, 0, 0.1);
+            --primary-color: #FFD700;
+            --secondary-color: #D4AF37;
+            --dark-color: #6B5B00;
+            --light-color: #FFF8DC;
         }
 
         body {
-            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-            color: var(--dark);
-            min-height: 100vh;
-            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-color);
+            color: #333;
             overflow-x: hidden;
         }
 
-        /* Header & Navigation */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
         header {
-            background: linear-gradient(to right, var(--dark), var(--dark-gold));
-            padding: 1rem 5%;
-            box-shadow: 0 4px 12px var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-bottom: 4px solid var(--dark-color);
         }
 
         .logo {
@@ -50,141 +47,88 @@
             gap: 15px;
         }
 
-        .logo-icon {
-            font-size: 2.5rem;
-            color: var(--light-gold);
-        }
-
-        .logo-text {
+        .logo-text h1 {
+            margin: 0;
             font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--light);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        nav ul {
+        nav {
             display: flex;
-            list-style: none;
-            gap: 30px;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        nav a {
-            color: var(--cream);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1rem;
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
             padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background-color: var(--dark-color);
+            color: white;
+            text-decoration: none;
             border-radius: 5px;
-            transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
 
-        nav a:hover, nav a.active {
-            background-color: var(--gold);
-            color: var(--dark);
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            color: var(--dark);
-            display: inline-block;
-            padding: 0 20px;
-            background: var(--cream);
-            position: relative;
-            z-index: 1;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(to right, transparent, var(--gold), transparent);
-            z-index: 0;
-        }
-
-        /* Table Styles */
         .table-container {
-            background: var(--light);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px var(--shadow);
             overflow-x: auto;
-            margin-bottom: 4rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 30px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 900px;
         }
 
         th, td {
-            padding: 15px 20px;
+            padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
 
-        thead {
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: var(--light);
-        }
-
         th {
+            background-color: #FFF9E6;
+            color: var(--dark-color);
             font-weight: 600;
         }
 
-        tbody tr {
-            transition: background 0.3s;
+        tr:hover {
+            background-color: #f9f9f9;
         }
 
-        tbody tr:hover {
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        .actions {
+        .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 5px;
         }
 
-        .btn-edit, .btn-delete {
-            padding: 6px 12px;
-            border-radius: 4px;
+        .btn-action {
+            padding: 5px 10px;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-edit {
-            background: var(--gold);
-            color: var(--dark);
+            transition: background-color 0.2s;
         }
 
         .btn-delete {
-            background: #e74c3c;
+            background-color: #ff6b6b;
             color: white;
         }
 
-        .btn-edit:hover, .btn-delete:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        /* Floating Action Button */
         .fab-container {
             position: fixed;
             bottom: 30px;
@@ -193,284 +137,197 @@
         }
 
         .fab {
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
         .fab:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
 
-        /* Modal */
-        .modal-overlay {
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
+            justify-content: center;
+            align-items: center;
         }
 
         .modal-content {
-            background: white;
-            border-radius: 12px;
+            background-color: white;
+            border-radius: 10px;
             width: 90%;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
         }
 
         .modal-header {
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
             padding: 20px;
+            border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
         }
 
-        .modal-header h3 {
-            font-size: 1.5rem;
+        .modal-header h2 {
+            margin: 0;
+            color: var(--dark-color);
         }
 
         .close-modal {
             background: none;
             border: none;
-            color: white;
             font-size: 1.5rem;
             cursor: pointer;
+            color: #777;
         }
 
         .modal-body {
-            padding: 25px;
+            padding: 20px;
         }
 
-        .input-group {
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .input-group label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
+            font-weight: 600;
+            color: #555;
         }
 
-        .input-group input, .input-group select {
+        .form-group input, .form-group select {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 1rem;
-            transition: border-color 0.3s;
         }
 
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--gold);
-            outline: none;
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .items-container {
+            margin-top: 20px;
         }
 
         .item-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
+            display: flex;
             gap: 15px;
             margin-bottom: 15px;
-            align-items: end;
+            align-items: flex-end;
         }
 
-        .add-item-btn {
-            background: var(--dark-gold);
-            color: white;
+        .btn-add-item {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             border: none;
-            padding: 8px 15px;
             border-radius: 5px;
+            padding: 10px 15px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
+            font-weight: 600;
+            margin-top: 10px;
         }
 
-        .add-item-btn:hover {
-            background: var(--dark);
-        }
-
-        .remove-item-btn {
-            background: #e74c3c;
+        .btn-remove-item {
+            background-color: #ff6b6b;
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 8px;
+            border-radius: 5px;
+            padding: 10px;
             cursor: pointer;
+            margin-bottom: 10px;
         }
 
         .modal-footer {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
+            padding: 15px 20px;
             border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
 
-        .btn-save, .btn-cancel {
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: bold;
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             border: none;
         }
 
-        .btn-save {
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
         }
 
-        .btn-cancel {
-            background: #e0e0e0;
-            color: var(--dark);
-        }
-
-        .btn-save:hover, .btn-cancel:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-        }
-
-        /* Back button */
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-
-        .back-button:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-        }
-
-        /* Autocomplete */
-        .autocomplete {
-            position: relative;
-        }
-
-        .autocomplete-items {
-            position: absolute;
-            border: 1px solid #d4d4d4;
-            border-bottom: none;
-            border-top: none;
-            z-index: 99;
-            top: 100%;
-            left: 0;
-            right: 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .autocomplete-items div {
-            padding: 10px;
-            cursor: pointer;
-            background-color: #fff;
-            border-bottom: 1px solid #d4d4d4;
-        }
-
-        .autocomplete-items div:hover {
-            background-color: #e9e9e9;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            header {
+            .form-row, .item-row {
                 flex-direction: column;
-                padding: 1rem;
-            }
-            
-            .logo {
-                margin-bottom: 1rem;
-            }
-            
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
                 gap: 10px;
             }
             
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            
-            .item-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-body {
-                padding: 15px;
+            .modal-content {
+                width: 95%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header & Navigation -->
     <header>
-        <div class="logo">
-            <i class="fas fa-book logo-icon"></i>
-            <div class="logo-text">Koperasi Mahida</div>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-book-open" style="font-size: 2.5rem; color: white;"></i>
+                    <div class="logo-text">
+                        <h1>Koperasi Mahida</h1>
+                        <p>Sistem Akuntansi Toko Kitab</p>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+                    <span id="userName">Admin</span>
+                </div>
+            </nav>
         </div>
-        <nav>
-            <ul>
-                <li><a href="beranda.html">Menu</a></li>
-                <li><a href="pemasukan.html">Pemasukan</a></li>
-                <li><a href="penjualan.html" class="active">Penjualan</a></li>
-                <li><a href="laporan.html">Laporan</a></li>
-                <li><a href="#" id="logoutBtn">Keluar</a></li>
-            </ul>
-        </nav>
     </header>
-
-    <!-- Main Content -->
+    
     <div class="container">
-        <a href="beranda.html" class="back-button">
+        <a href="menu.html" class="btn-back">
             <i class="fas fa-arrow-left"></i> Kembali ke Menu
         </a>
         
-        <div class="section-title">
-            <h2>Data Penjualan</h2>
-        </div>
-        
         <div class="table-container">
-            <table id="salesTable">
+            <table id="penjualanTable">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -478,99 +335,96 @@
                         <th>Nama</th>
                         <th>Keterangan</th>
                         <th>Nama Kitab</th>
-                        <th>Jumlah Kitab</th>
+                        <th>Jumlah</th>
                         <th>Harga Satuan</th>
                         <th>Total Harga</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="salesTableBody">
-                    <!-- Data akan diisi oleh JavaScript -->
+                <tbody>
+                    <tr>
+                        <td colspan="9" style="text-align: center;">Memuat data penjualan...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <!-- Floating Action Button -->
+    
+    <!-- FAB Button -->
     <div class="fab-container">
-        <div class="fab" id="addSaleBtn">
+        <div class="fab" id="fabButton">
             <i class="fas fa-plus"></i>
         </div>
     </div>
-
-    <!-- Modal Form -->
-    <div class="modal-overlay" id="salesModal">
+    
+    <!-- Modal Input Penjualan -->
+    <div class="modal" id="inputModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Tambah Data Penjualan</h3>
+                <h2><i class="fas fa-cash-register"></i> Input Penjualan</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="input-group">
-                    <label for="tanggal">Tanggal</label>
-                    <input type="date" id="tanggal" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="nama">Nama Pembeli</label>
-                    <input type="text" id="nama" placeholder="Nama pembeli" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="keterangan">Keterangan</label>
-                    <select id="keterangan" required>
-                        <option value="">Pilih keterangan</option>
-                        <option value="konsumen">Konsumen</option>
-                        <option value="lembaga">Lembaga</option>
-                    </select>
-                </div>
-                
-                <h4>Item Penjualan</h4>
-                <div id="itemsContainer">
-                    <div class="item-row">
-                        <div class="autocomplete">
-                            <label>Nama Kitab</label>
-                            <input type="text" class="nama-kitab" placeholder="Nama kitab" required>
+                <form id="penjualanForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="inputTanggal">Tanggal</label>
+                            <input type="date" id="inputTanggal" required>
                         </div>
-                        <div>
-                            <label>Jumlah Kitab</label>
-                            <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
-                        </div>
-                        <div>
-                            <label>Harga Satuan</label>
-                            <input type="number" class="harga-satuan" placeholder="Harga" readonly>
-                        </div>
-                        <div>
-                            <label>Total Harga</label>
-                            <input type="number" class="total-harga" placeholder="Total" readonly>
+                        <div class="form-group">
+                            <label for="inputNama">Nama Pembeli</label>
+                            <input type="text" id="inputNama" required placeholder="Nama pembeli">
                         </div>
                     </div>
-                </div>
-                
-                <button class="add-item-btn" id="addItemBtn">
-                    <i class="fas fa-plus"></i> Tambah Item
-                </button>
-                
-                <div class="input-group" style="margin-top: 20px;">
-                    <label>Total Keseluruhan</label>
-                    <input type="number" id="grandTotal" placeholder="0" readonly>
-                </div>
+                    <div class="form-group">
+                        <label for="inputKeterangan">Keterangan</label>
+                        <select id="inputKeterangan" required>
+                            <option value="">Pilih Keterangan</option>
+                            <option value="Lembaga">Lembaga</option>
+                            <option value="Konsumen">Konsumen</option>
+                        </select>
+                    </div>
+                    
+                    <div class="items-container" id="itemsContainer">
+                        <h3>Item Barang</h3>
+                        <div class="item-row">
+                            <div class="form-group">
+                                <label for="itemNamaKitab0">Nama Kitab</label>
+                                <input type="text" id="itemNamaKitab0" required placeholder="Nama kitab" class="kitab-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemJumlah0">Jumlah</label>
+                                <input type="number" id="itemJumlah0" required placeholder="Jumlah" min="1" value="1" class="jumlah-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemHargaSatuan0">Harga Satuan</label>
+                                <input type="number" id="itemHargaSatuan0" readonly placeholder="Harga satuan" class="harga-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemTotalHarga0">Total Harga</label>
+                                <input type="number" id="itemTotalHarga0" readonly placeholder="Total harga" class="total-input">
+                            </div>
+                            <button type="button" class="btn-remove-item" disabled>
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn-add-item" id="addItemBtn">
+                        <i class="fas fa-plus"></i> Tambah Item
+                    </button>
+                </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" id="cancelBtn">Batal</button>
-                <button class="btn-save" id="saveBtn">Simpan Data</button>
+                <button class="btn btn-secondary" id="cancelBtn">Keluar</button>
+                <button class="btn btn-primary" id="saveBtn">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-
     <script>
-        // Konfigurasi Firebase
-       const firebaseConfig = {
+        // Firebase configuration (ganti dengan config Anda)
+        const firebaseConfig = {
   apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
   authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
   projectId: "koperasi-mahida-24f7b",
@@ -578,425 +432,327 @@
   messagingSenderId: "399595189627",
   appId: "1:399595189627:web:eaedd97ba36718206bb9de"
 };
-
-        // Inisialisasi Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
-        // Referensi ke koleksi
-        const salesRef = db.collection("penjualan");
-        const warehouseRef = db.collection("warehouse");
-
-        // Variabel untuk autocomplete
-        let warehouseItems = [];
-        let currentItems = [];
-
-        // Elemen DOM
-        const addSaleBtn = document.getElementById('addSaleBtn');
-        const salesModal = document.getElementById('salesModal');
+        const auth = firebase.auth();
+        
+        // DOM Elements
+        const fabButton = document.getElementById('fabButton');
+        const inputModal = document.getElementById('inputModal');
         const closeModal = document.getElementById('closeModal');
         const cancelBtn = document.getElementById('cancelBtn');
         const saveBtn = document.getElementById('saveBtn');
-        const addItemBtn = document.getElementById('addItemBtn');
+        const penjualanForm = document.getElementById('penjualanForm');
         const itemsContainer = document.getElementById('itemsContainer');
-        const salesTableBody = document.getElementById('salesTableBody');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const grandTotalInput = document.getElementById('grandTotal');
-
-        // Set tanggal default ke hari ini
-        document.getElementById('tanggal').valueAsDate = new Date();
-
-        // Buka modal
-        addSaleBtn.addEventListener('click', () => {
-            salesModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-
-        // Tutup modal
-        function closeModalFunc() {
-            salesModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            resetForm();
+        const addItemBtn = document.getElementById('addItemBtn');
+        const penjualanTable = document.getElementById('penjualanTable').getElementsByTagName('tbody')[0];
+        const userName = document.getElementById('userName');
+        
+        // Variabel global
+        let items = [{
+            namaKitab: '',
+            jumlah: 1,
+            hargaSatuan: 0,
+            totalHarga: 0
+        }];
+        let gudangData = [];
+        
+        // Format Rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
         }
-
-        closeModal.addEventListener('click', closeModalFunc);
-        cancelBtn.addEventListener('click', closeModalFunc);
-
-        // Muat data warehouse untuk autocomplete
-        async function loadWarehouseItems() {
+        
+        // Format Tanggal
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+        
+        // Initialize App
+        function initApp() {
+            // Set tanggal hari ini sebagai default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputTanggal').value = today;
+            
+            // Load data
+            loadGudangData();
+            loadPenjualanData();
+            
+            // Set user name
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    userName.textContent = user.displayName || user.email.split('@')[0];
+                } else {
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+        
+        // Load gudang data untuk referensi harga
+        async function loadGudangData() {
             try {
-                const snapshot = await warehouseRef.get();
-                warehouseItems = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    warehouseItems.push({
-                        id: doc.id,
-                        namaKitab: data.namaKitab,
-                        hargaJualKonsumen: data.hargaJualKonsumen,
-                        hargaJualLembaga: data.hargaJualLembaga,
-                        stok: data.stok
-                    });
-                });
+                const snapshot = await db.collection('gudang').get();
+                gudangData = snapshot.docs.map(doc => doc.data());
             } catch (error) {
-                console.error('Error loading warehouse items:', error);
+                console.error('Error loading gudang data: ', error);
+                alert('Gagal memuat data gudang');
             }
         }
-
-        // Autocomplete untuk nama kitab
-        function setupAutocomplete(inputElement) {
-            inputElement.addEventListener('input', function() {
-                const input = this.value.toLowerCase();
-                const container = this.parentNode;
-                let autocompleteList = container.querySelector('.autocomplete-items');
-                
-                // Hapus autocomplete sebelumnya
-                if (autocompleteList) {
-                    autocompleteList.remove();
-                }
-                
-                if (!input) return;
-                
-                // Filter item yang sesuai
-                const matches = warehouseItems.filter(item => 
-                    item.namaKitab.toLowerCase().includes(input)
-                );
-                
-                if (matches.length === 0) return;
-                
-                // Buat elemen autocomplete
-                autocompleteList = document.createElement('div');
-                autocompleteList.className = 'autocomplete-items';
-                
-                matches.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.textContent = item.namaKitab;
-                    itemElement.addEventListener('click', function() {
-                        inputElement.value = item.namaKitab;
-                        autocompleteList.remove();
-                        
-                        // Set harga satuan berdasarkan keterangan
-                        const keterangan = document.getElementById('keterangan').value;
-                        const hargaSatuan = keterangan === 'lembaga' ? item.hargaJualLembaga : item.hargaJualKonsumen;
-                        const row = inputElement.closest('.item-row');
-                        row.querySelector('.harga-satuan').value = hargaSatuan;
-                        
-                        // Hitung total jika jumlah sudah diisi
-                        const jumlah = row.querySelector('.jumlah').value;
-                        if (jumlah) {
-                            row.querySelector('.total-harga').value = jumlah * hargaSatuan;
-                            calculateGrandTotal();
-                        }
-                    });
-                    autocompleteList.appendChild(itemElement);
-                });
-                
-                container.appendChild(autocompleteList);
-            });
-        }
-
-        // Tambah item baru
-        addItemBtn.addEventListener('click', () => {
-            const itemRow = document.createElement('div');
-            itemRow.className = 'item-row';
-            itemRow.innerHTML = `
-                <div class="autocomplete">
-                    <input type="text" class="nama-kitab" placeholder="Nama kitab" required>
-                </div>
-                <div>
-                    <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
-                </div>
-                <div>
-                    <input type="number" class="harga-satuan" placeholder="Harga" readonly>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <input type="number" class="total-harga" placeholder="Total" readonly>
-                    </div>
-                    <button class="remove-item-btn" type="button">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            
-            // Setup autocomplete untuk input baru
-            setupAutocomplete(itemRow.querySelector('.nama-kitab'));
-            
-            // Tambahkan event listener untuk jumlah
-            itemRow.querySelector('.jumlah').addEventListener('input', function() {
-                const hargaSatuan = parseFloat(this.closest('.item-row').querySelector('.harga-satuan').value) || 0;
-                const jumlah = parseFloat(this.value) || 0;
-                const totalHarga = hargaSatuan * jumlah;
-                this.closest('.item-row').querySelector('.total-harga').value = totalHarga;
-                calculateGrandTotal();
-            });
-            
-            // Tambahkan fungsi untuk menghapus item
-            const removeBtn = itemRow.querySelector('.remove-item-btn');
-            removeBtn.addEventListener('click', () => {
-                itemRow.remove();
-                calculateGrandTotal();
-            });
-            
-            itemsContainer.appendChild(itemRow);
-        });
-
-        // Hitung grand total
-        function calculateGrandTotal() {
-            let total = 0;
-            document.querySelectorAll('.item-row').forEach(row => {
-                const totalHarga = parseFloat(row.querySelector('.total-harga').value) || 0;
-                total += totalHarga;
-            });
-            grandTotalInput.value = total;
-        }
-
-        // Update harga saat keterangan berubah
-        document.getElementById('keterangan').addEventListener('change', function() {
-            document.querySelectorAll('.item-row').forEach(row => {
-                const namaKitab = row.querySelector('.nama-kitab').value;
-                if (namaKitab) {
-                    const item = warehouseItems.find(item => item.namaKitab === namaKitab);
-                    if (item) {
-                        const hargaSatuan = this.value === 'lembaga' ? item.hargaJualLembaga : item.hargaJualKonsumen;
-                        row.querySelector('.harga-satuan').value = hargaSatuan;
-                        
-                        // Update total jika jumlah sudah diisi
-                        const jumlah = row.querySelector('.jumlah').value;
-                        if (jumlah) {
-                            row.querySelector('.total-harga').value = jumlah * hargaSatuan;
-                            calculateGrandTotal();
-                        }
-                    }
-                }
-            });
-        });
-
-        // Reset form
-        function resetForm() {
-            document.getElementById('nama').value = '';
-            document.getElementById('keterangan').value = '';
-            grandTotalInput.value = '';
-            
-            // Hapus semua item kecuali yang pertama
-            const items = document.querySelectorAll('.item-row');
-            items.forEach((item, index) => {
-                if (index > 0) item.remove();
-            });
-            
-            // Reset item pertama
-            const firstItem = document.querySelector('.item-row');
-            firstItem.querySelector('.nama-kitab').value = '';
-            firstItem.querySelector('.jumlah').value = '';
-            firstItem.querySelector('.harga-satuan').value = '';
-            firstItem.querySelector('.total-harga').value = '';
-        }
-
-        // Simpan data penjualan ke Firebase
-        saveBtn.addEventListener('click', async () => {
-            const tanggal = document.getElementById('tanggal').value;
-            const nama = document.getElementById('nama').value;
-            const keterangan = document.getElementById('keterangan').value;
-            
-            // Validasi input
-            if (!tanggal || !nama || !keterangan) {
-                alert('Harap isi semua field utama!');
-                return;
-            }
-            
-            // Kumpulkan item
-            const items = [];
-            let isValid = true;
-            
-            document.querySelectorAll('.item-row').forEach(row => {
-                const namaKitab = row.querySelector('.nama-kitab').value;
-                const jumlah = parseInt(row.querySelector('.jumlah').value);
-                const hargaSatuan = parseInt(row.querySelector('.harga-satuan').value);
-                const totalHarga = parseInt(row.querySelector('.total-harga').value);
-                
-                // Validasi item
-                if (!namaKitab || !jumlah || !hargaSatuan) {
-                    isValid = false;
-                    return;
-                }
-                
-                // Cek stok
-                const warehouseItem = warehouseItems.find(item => item.namaKitab === namaKitab);
-                if (warehouseItem && jumlah > warehouseItem.stok) {
-                    alert(`Stok ${namaKitab} tidak mencukupi! Stok tersedia: ${warehouseItem.stok}`);
-                    isValid = false;
-                    return;
-                }
-                
-                items.push({
-                    namaKitab,
-                    jumlah,
-                    hargaSatuan,
-                    totalHarga
-                });
-            });
-            
-            if (!isValid || items.length === 0) {
-                alert('Harap isi semua field item dengan benar dan pastikan stok mencukupi!');
-                return;
-            }
-            
+        
+        // Load penjualan data
+        async function loadPenjualanData() {
             try {
-                // Simpan ke Firestore
-                await salesRef.add({
-                    tanggal: new Date(tanggal),
-                    nama,
-                    keterangan,
-                    items,
-                    grandTotal: parseInt(grandTotalInput.value),
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Update stok di warehouse
-                const batch = db.batch();
-                items.forEach(item => {
-                    const warehouseItem = warehouseItems.find(w => w.namaKitab === item.namaKitab);
-                    if (warehouseItem) {
-                        const docRef = warehouseRef.doc(warehouseItem.id);
-                        batch.update(docRef, {
-                            stok: firebase.firestore.FieldValue.increment(-item.jumlah),
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
-                });
-                
-                await batch.commit();
-                
-                alert('Data penjualan berhasil disimpan!');
-                closeModalFunc();
-                loadSalesData();
-            } catch (error) {
-                console.error('Error saving data: ', error);
-                alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
-            }
-        });
-
-        // Muat data penjualan dari Firestore
-        async function loadSalesData() {
-            try {
-                const snapshot = await salesRef.orderBy('createdAt', 'desc').get();
-                salesTableBody.innerHTML = '';
+                const snapshot = await db.collection('penjualan').orderBy('createdAt', 'desc').get();
+                penjualanTable.innerHTML = '';
                 
                 if (snapshot.empty) {
-                    salesTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Belum ada data penjualan</td></tr>';
+                    penjualanTable.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center;">Tidak ada data penjualan</td>
+                        </tr>
+                    `;
                     return;
                 }
                 
-                let nomor = 1;
+                let counter = 1;
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    const tanggal = data.tanggal.toDate().toLocaleDateString('id-ID');
+                    const row = penjualanTable.insertRow();
                     
-                    // Loop melalui setiap item
-                    data.items.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${nomor}</td>
-                            <td>${tanggal}</td>
-                            <td>${data.nama}</td>
-                            <td>${data.keterangan === 'lembaga' ? 'Lembaga' : 'Konsumen'}</td>
-                            <td>${item.namaKitab}</td>
-                            <td>${item.jumlah}</td>
-                            <td>Rp ${item.hargaSatuan.toLocaleString('id-ID')}</td>
-                            <td>Rp ${item.totalHarga.toLocaleString('id-ID')}</td>
-                            <td class="actions">
-                                <button class="btn-edit"><i class="fas fa-edit"></i></button>
-                                <button class="btn-delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
-                            </td>
-                        `;
-                        salesTableBody.appendChild(row);
-                        nomor++;
-                    });
+                    row.innerHTML = `
+                        <td>${counter++}</td>
+                        <td>${formatDate(data.tanggal)}</td>
+                        <td>${data.nama}</td>
+                        <td>${data.keterangan}</td>
+                        <td>${data.namaKitab}</td>
+                        <td>${data.jumlah}</td>
+                        <td>${formatRupiah(data.hargaSatuan || 0)}</td>
+                        <td>${formatRupiah(data.totalHarga || 0)}</td>
+                        <td class="action-buttons">
+                            <button class="btn-action btn-delete" data-id="${doc.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
                 });
                 
-                // Tambahkan event listener untuk tombol hapus
+                // Add event listeners to delete buttons
                 document.querySelectorAll('.btn-delete').forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        const id = btn.getAttribute('data-id');
+                    btn.addEventListener('click', async (e) => {
                         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                            const id = e.currentTarget.dataset.id;
                             try {
-                                // Dapatkan data penjualan untuk mengembalikan stok
-                                const doc = await salesRef.doc(id).get();
-                                if (doc.exists) {
-                                    const data = doc.data();
-                                    
-                                    // Update stok di warehouse
-                                    const batch = db.batch();
-                                    data.items.forEach(item => {
-                                        const warehouseItem = warehouseItems.find(w => w.namaKitab === item.namaKitab);
-                                        if (warehouseItem) {
-                                            const docRef = warehouseRef.doc(warehouseItem.id);
-                                            batch.update(docRef, {
-                                                stok: firebase.firestore.FieldValue.increment(item.jumlah),
-                                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                                            });
-                                        }
-                                    });
-                                    
-                                    await batch.commit();
-                                }
-                                
-                                // Hapus dokumen penjualan
-                                await salesRef.doc(id).delete();
-                                loadSalesData();
+                                await db.collection('penjualan').doc(id).delete();
+                                loadPenjualanData();
+                                alert('Data berhasil dihapus');
                             } catch (error) {
                                 console.error('Error deleting document: ', error);
-                                alert('Terjadi kesalahan saat menghapus data');
+                                alert('Gagal menghapus data');
                             }
                         }
                     });
                 });
-                
             } catch (error) {
-                console.error('Error loading data: ', error);
-                salesTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: red;">Gagal memuat data</td></tr>';
+                console.error('Error loading penjualan data: ', error);
+                penjualanTable.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center;">Gagal memuat data penjualan</td>
+                    </tr>
+                `;
             }
         }
-
-        // Logout
-        logoutBtn.addEventListener('click', () => {
-            if (confirm('Apakah Anda yakin ingin keluar?')) {
-                auth.signOut().then(() => {
-                    window.location.href = 'index.html';
-                }).catch(error => {
-                    console.error('Logout error: ', error);
-                    alert('Terjadi kesalahan saat logout');
-                });
+        
+        // Modal handling
+        fabButton.addEventListener('click', () => {
+            inputModal.style.display = 'flex';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            inputModal.style.display = 'none';
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            inputModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === inputModal) {
+                inputModal.style.display = 'none';
             }
         });
-
-        // Muat data saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Cek status login
-            auth.onAuthStateChanged(user => {
-                if (!user) {
-                    window.location.href = 'index.html';
+        
+        // Add item button
+        addItemBtn.addEventListener('click', () => {
+            items.push({
+                namaKitab: '',
+                jumlah: 1,
+                hargaSatuan: 0,
+                totalHarga: 0
+            });
+            renderItems();
+        });
+        
+        // Render items in form
+        function renderItems() {
+            itemsContainer.innerHTML = `
+                <h3>Item Barang</h3>
+                ${items.map((item, index) => `
+                    <div class="item-row" data-index="${index}">
+                        <div class="form-group">
+                            <label for="itemNamaKitab${index}">Nama Kitab</label>
+                            <input type="text" id="itemNamaKitab${index}" value="${item.namaKitab}" required placeholder="Nama kitab" class="kitab-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemJumlah${index}">Jumlah</label>
+                            <input type="number" id="itemJumlah${index}" value="${item.jumlah}" required placeholder="Jumlah" min="1" class="jumlah-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemHargaSatuan${index}">Harga Satuan</label>
+                            <input type="number" id="itemHargaSatuan${index}" value="${item.hargaSatuan}" readonly placeholder="Harga satuan" class="harga-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemTotalHarga${index}">Total Harga</label>
+                            <input type="number" id="itemTotalHarga${index}" value="${item.totalHarga}" readonly placeholder="Total harga" class="total-input">
+                        </div>
+                        <button type="button" class="btn-remove-item" ${items.length === 1 ? 'disabled' : ''}>
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('')}
+            `;
+            
+            // Add event listeners to all remove buttons
+            document.querySelectorAll('.btn-remove-item').forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    if (items.length > 1) {
+                        items.splice(index, 1);
+                        renderItems();
+                    }
+                });
+            });
+            
+            // Add event listeners to all inputs
+            items.forEach((item, index) => {
+                const namaKitabInput = document.getElementById(`itemNamaKitab${index}`);
+                const jumlahInput = document.getElementById(`itemJumlah${index}`);
+                const hargaSatuanInput = document.getElementById(`itemHargaSatuan${index}`);
+                const totalHargaInput = document.getElementById(`itemTotalHarga${index}`);
+                
+                namaKitabInput.addEventListener('change', (e) => {
+                    items[index].namaKitab = e.target.value;
+                    updateHarga(index);
+                });
+                
+                jumlahInput.addEventListener('change', (e) => {
+                    items[index].jumlah = parseInt(e.target.value);
+                    updateTotalHarga(index);
+                });
+            });
+        }
+        
+        // Update harga based on kitab name and keterangan
+        function updateHarga(index) {
+            const keterangan = document.getElementById('inputKeterangan').value;
+            const namaKitab = items[index].namaKitab;
+            
+            if (!namaKitab || !keterangan) return;
+            
+            // Cari data di gudang
+            const barang = gudangData.find(item => item.namaBarang === namaKitab);
+            
+            if (barang) {
+                const harga = keterangan === 'Lembaga' ? barang.hargaJualLembaga : barang.hargaJualKonsumen;
+                items[index].hargaSatuan = harga || 0;
+                document.getElementById(`itemHargaSatuan${index}`).value = items[index].hargaSatuan;
+                updateTotalHarga(index);
+            } else {
+                alert('Kitab tidak ditemukan di gudang!');
+                items[index].hargaSatuan = 0;
+                document.getElementById(`itemHargaSatuan${index}`).value = '';
+            }
+        }
+        
+        // Update total harga
+        function updateTotalHarga(index) {
+            items[index].totalHarga = items[index].jumlah * items[index].hargaSatuan;
+            document.getElementById(`itemTotalHarga${index}`).value = items[index].totalHarga;
+        }
+        
+        // Save penjualan data
+        saveBtn.addEventListener('click', async () => {
+            const tanggal = document.getElementById('inputTanggal').value;
+            const nama = document.getElementById('inputNama').value;
+            const keterangan = document.getElementById('inputKeterangan').value;
+            
+            // Validate items
+            let isValid = true;
+            items.forEach(item => {
+                if (!item.namaKitab || !item.jumlah || item.hargaSatuan <= 0) {
+                    isValid = false;
                 }
             });
             
-            // Muat data warehouse untuk autocomplete
-            await loadWarehouseItems();
+            if (!isValid) {
+                alert('Harap isi semua field dengan benar dan pastikan harga satuan valid');
+                return;
+            }
             
-            // Setup autocomplete untuk item pertama
-            setupAutocomplete(document.querySelector('.nama-kitab'));
-            
-            // Muat data penjualan
-            loadSalesData();
-            
-            // Tambahkan event listener untuk jumlah pada item pertama
-            document.querySelector('.jumlah').addEventListener('input', function() {
-                const hargaSatuan = parseFloat(this.closest('.item-row').querySelector('.harga-satuan').value) || 0;
-                const jumlah = parseFloat(this.value) || 0;
-                const totalHarga = hargaSatuan * jumlah;
-                this.closest('.item-row').querySelector('.total-harga').value = totalHarga;
-                calculateGrandTotal();
+            try {
+                // Save each item to penjualan collection
+                for (const item of items) {
+                    // Add to penjualan collection
+                    await db.collection('penjualan').add({
+                        tanggal,
+                        nama,
+                        keterangan,
+                        namaKitab: item.namaKitab,
+                        jumlah: item.jumlah,
+                        hargaSatuan: item.hargaSatuan,
+                        totalHarga: item.totalHarga,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Update stok di gudang
+                    const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
+                    const snapshot = await gudangRef.get();
+                    
+                    if (!snapshot.empty) {
+                        // Update existing document
+                        snapshot.forEach(async doc => {
+                            await db.collection('gudang').doc(doc.id).update({
+                                stok: firebase.firestore.FieldValue.increment(-item.jumlah),
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        });
+                    }
+                }
+                
+                alert('Data penjualan berhasil disimpan');
+                inputModal.style.display = 'none';
+                loadPenjualanData();
+                loadGudangData(); // Refresh data gudang untuk update stok
+            } catch (error) {
+                console.error('Error saving data: ', error);
+                alert('Terjadi kesalahan saat menyimpan data');
+            }
+        });
+        
+        // Listen for keterangan change to update harga
+        document.getElementById('inputKeterangan').addEventListener('change', () => {
+            items.forEach((_, index) => {
+                updateHarga(index);
             });
         });
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>

@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koperasi Mahida - Toko Kitab</title>
-    <!-- Firebase SDK -->
+    <title>Beranda - Koperasi Mahida</title>
+    <!-- Import Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #FFD700;
@@ -35,28 +36,24 @@
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 20px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-bottom: 4px solid var(--dark-color);
         }
         
         .logo {
             display: flex;
             align-items: center;
+            gap: 15px;
         }
         
-        .logo i {
-            font-size: 2.5rem;
-            margin-right: 15px;
+        .logo img {
+            height: 50px;
         }
         
         .logo-text h1 {
             margin: 0;
             font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
         
         .logo-text p {
@@ -65,300 +62,373 @@
             opacity: 0.9;
         }
         
-        nav ul {
+        nav {
             display: flex;
-            list-style: none;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        nav ul li {
-            margin-left: 20px;
-        }
-        
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-            padding: 8px 12px;
-            border-radius: 4px;
-        }
-        
-        nav ul li a:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
-        
-        .hero {
-            background: url('https://images.unsplash.com/photo-1600189261867-30e5ffe7b8da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
-            background-size: cover;
-            height: 500px;
+        .user-profile {
             display: flex;
             align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
             position: relative;
         }
         
-        .hero::before {
-            content: '';
+        .user-profile:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .user-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .user-profile .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-profile .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-profile .role {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+        
+        .user-dropdown {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            padding: 10px 0;
+            display: none;
+            z-index: 100;
         }
         
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            color: white;
-            max-width: 600px;
+        .user-profile:hover .user-dropdown {
+            display: block;
         }
         
-        .hero-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        .user-dropdown a {
+            display: block;
+            padding: 8px 15px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s;
         }
         
-        .hero-content p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .user-dropdown a:hover {
+            background-color: #f5f5f5;
         }
         
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
+        .user-dropdown a i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #555;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
             background-color: var(--primary-color);
             color: var(--dark-color);
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
+            font-weight: 600;
         }
         
-        .btn:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        .sidebar-menu a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
         }
         
-        .login-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
         }
         
-        .login-content {
+        .welcome-card {
             background-color: white;
+            border-radius: 10px;
             padding: 30px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: modalFadeIn 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
         
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .welcome-card h2 {
+            color: var(--dark-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
         }
         
-        .login-content h3 {
+        .welcome-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .stat-card h3 {
             margin-top: 0;
             color: var(--dark-color);
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #777;
+        .stat-card h3 i {
+            color: var(--secondary-color);
         }
         
-        .register-link {
-            text-align: center;
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--dark-color);
+        }
+        
+        .stat-card .description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .recent-activity {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .recent-activity h2 {
+            color: var(--dark-color);
+            margin-top: 0;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        
+        .activity-list {
             margin-top: 20px;
         }
         
-        .register-link a {
-            color: var(--secondary-color);
-            text-decoration: none;
+        .activity-item {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
         }
         
-        .register-link a:hover {
-            text-decoration: underline;
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #FFF9E6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .activity-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .activity-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 5px;
         }
         
         footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
             background-color: var(--dark-color);
             color: white;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        
-        .social-icons {
-            margin: 20px 0;
-        }
-        
-        .social-icons a {
-            color: white;
-            margin: 0 10px;
-            font-size: 1.5rem;
-            transition: all 0.3s;
-        }
-        
-        .social-icons a:hover {
-            color: var(--primary-color);
         }
         
         @media (max-width: 768px) {
-            .header-content {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            nav {
                 flex-direction: column;
-                text-align: center;
+                gap: 15px;
             }
             
-            nav ul {
-                margin-top: 20px;
-                justify-content: center;
-            }
-            
-            nav ul li {
-                margin: 0 10px;
-            }
-            
-            .hero-content {
-                text-align: center;
-                padding: 0 20px;
-            }
-            
-            .hero-content h2 {
-                font-size: 2rem;
+            .user-profile {
+                margin-top: 15px;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-book-open"></i>
-                <div class="logo-text">
-                    <h1>Koperasi Mahida</h1>
-                    <p>Toko Kitab Berkualitas</p>
-                </div>
-            </div>
+        <div class="container">
             <nav>
-                <ul>
-                    <li><a href="#" class="active">Beranda</a></li>
-                    <li><a href="#">Produk</a></li>
-                    <li><a href="#">Tentang Kami</a></li>
-                    <li><a href="#">Kontak</a></li>
-                    <li><a href="#" id="loginBtn">Login</a></li>
-                </ul>
+                <div class="logo">
+                    <i class="fas fa-book-open" style="font-size: 2.5rem; color: white;"></i>
+                    <div class="logo-text">
+                        <h1>Koperasi Mahida</h1>
+                        <p>Sistem Akuntansi Toko Kitab</p>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B5B00&color=fff" alt="User" id="userAvatar">
+                    <div class="user-info">
+                        <span class="name" id="userName">Loading...</span>
+                        <span class="role" id="userRole">Admin</span>
+                    </div>
+                    <div class="user-dropdown">
+                        <a href="#"><i class="fas fa-user-cog"></i> Profil</a>
+                        <a href="#"><i class="fas fa-cog"></i> Pengaturan</a>
+                        <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
     
-    <section class="hero">
-        <div class="container hero-content">
-            <h2>Selamat Datang di Koperasi Mahida</h2>
-            <p>Koperasi Mahida adalah toko kitab yang menyediakan berbagai kitab-kitab berkualitas untuk kebutuhan pembelajaran agama. Kami berkomitmen untuk menyediakan literatur Islami yang autentik dan mudah diakses oleh seluruh masyarakat.</p>
-            <a href="#produk" class="btn">Lihat Produk</a>
-        </div>
-    </section>
-    
-    <section class="container" style="padding: 50px 0;">
-        <h2 style="text-align: center; color: var(--dark-color); margin-bottom: 30px;">Mengapa Memilih Koperasi Mahida?</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-            <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
-                <h3 style="margin-top: 0;">Kitab Berkualitas</h3>
-                <p>Kami hanya menyediakan kitab-kitab dengan kualitas terbaik dari penerbit terpercaya.</p>
+    <div class="container">
+        <div class="main-content">
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="beranda.html" class="active"><i class="fas fa-home"></i> Beranda</a></li>
+                    <li><a href="pemasukan.html"><i class="fas fa-boxes"></i> Barang</a></li>
+                    <li><a href="penjualan.html"><i class="fas fa-cash-register"></i> Penjualan</a></li>
+                    <li><a href="laporan.html"><i class="fas fa-file-alt"></i> Laporan</a></li>
+                </ul>
             </div>
-            <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <i class="fas fa-truck" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
-                <h3 style="margin-top: 0;">Pengiriman Cepat</h3>
-                <p>Proses pengiriman cepat dan aman ke seluruh wilayah Indonesia.</p>
-            </div>
-            <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <i class="fas fa-headset" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
-                <h3 style="margin-top: 0;">Layanan Pelanggan</h3>
-                <p>Tim kami siap membantu Anda dalam memilih kitab yang sesuai kebutuhan.</p>
-            </div>
-        </div>
-    </section>
-    
-    <div class="login-modal" id="loginModal">
-        <div class="login-content">
-            <span class="close-modal" id="closeModal">&times;</span>
-            <h3>Login Akun</h3>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
+            
+            <div class="content">
+                <div class="welcome-card">
+                    <h2><i class="fas fa-gem"></i> Selamat Datang</h2>
+                    <div class="welcome-message" id="welcomeMessage">
+                        Memuat data pengguna...
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" required>
+                
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3><i class="fas fa-chart-line"></i> Penjualan Minggu Ini</h3>
+                        <div class="value" id="weeklySales">Rp0</div>
+                        <div class="description">Total pendapatan dari penjualan 7 hari terakhir</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3><i class="fas fa-box-open"></i> Barang Masuk</h3>
+                        <div class="value" id="weeklyStock">0 item</div>
+                        <div class="description">Jumlah barang yang masuk minggu ini</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3><i class="fas fa-book"></i> Total Produk</h3>
+                        <div class="value" id="totalProducts">0</div>
+                        <div class="description">Jumlah jenis produk yang tersedia</div>
+                    </div>
                 </div>
-                <button type="submit" class="btn">Login</button>
-            </form>
-            <div class="register-link">
-                <p>Belum punya akun? <a href="https://wa.me/6285735041602" target="_blank">Hubungi Admin</a></p>
+                
+                <div class="recent-activity">
+                    <h2><i class="fas fa-bell"></i> Aktivitas Terkini</h2>
+                    <div class="activity-list" id="activityList">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Memuat data...</div>
+                                <div class="activity-description">Harap tunggu sebentar</div>
+                                <div class="activity-time">Baru saja</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
     <footer>
         <div class="container">
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/6285735041602" target="_blank"><i class="fab fa-whatsapp"></i></a>
-            </div>
-            <p>&copy; 2023 Koperasi Mahida. Semua Hak Dilindungi.</p>
+            <p>&copy; 2025 Koperasi Mahida - Toko Kitab. All Rights Reserved.</p>
         </div>
     </footer>
     
     <script>
-        // Firebase configuration
+        // Firebase configuration (harus sama dengan di index.html)
        const firebaseConfig = {
   apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
   authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
@@ -371,62 +441,180 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
         
         // DOM Elements
-        const loginBtn = document.getElementById('loginBtn');
-        const loginModal = document.getElementById('loginModal');
-        const closeModal = document.getElementById('closeModal');
-        const loginForm = document.getElementById('loginForm');
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const userAvatar = document.getElementById('userAvatar');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const weeklySales = document.getElementById('weeklySales');
+        const weeklyStock = document.getElementById('weeklyStock');
+        const totalProducts = document.getElementById('totalProducts');
+        const activityList = document.getElementById('activityList');
         
-        // Show modal when login button clicked
-        loginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            loginModal.style.display = 'flex';
-        });
+        // Format Rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
+        }
         
-        // Close modal when X clicked
-        closeModal.addEventListener('click', () => {
-            loginModal.style.display = 'none';
-        });
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === loginModal) {
-                loginModal.style.display = 'none';
-            }
-        });
-        
-        // Login form submission
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Signed in
-                    const user = userCredential.user;
-                    console.log("User logged in:", user);
-                    window.location.href = "beranda.html";
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    alert("Login gagal: " + errorMessage);
-                });
-        });
+        // Format Tanggal
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const date = timestamp.toDate();
+            return date.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
         
         // Check auth state
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in
-                console.log("User is logged in:", user);
+                userName.textContent = user.displayName || user.email.split('@')[0];
+                userAvatar.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName.textContent)}&background=6B5B00&color=fff`;
+                
+                // Set welcome message based on time
+                const hour = new Date().getHours();
+                let greeting;
+                if (hour < 11) greeting = "Selamat pagi";
+                else if (hour < 15) greeting = "Selamat siang";
+                else if (hour < 19) greeting = "Selamat sore";
+                else greeting = "Selamat malam";
+                
+                welcomeMessage.innerHTML = `
+                    <p>${greeting}, <strong>${userName.textContent}</strong>!</p>
+                    <p>Selamat bekerja di Sistem Akuntansi Koperasi Mahida. Berikut ringkasan aktivitas terkini:</p>
+                `;
+                
+                // Check if user is admin (dummy check)
+                // Di implementasi nyata, Anda perlu cek di Firestore
+                const isAdmin = user.email.includes('admin');
+                userRole.textContent = isAdmin ? 'Admin' : 'User';
+                
+                // Load data from Firestore
+                loadDashboardData();
             } else {
                 // User is signed out
-                console.log("User is logged out");
+                window.location.href = 'index.html';
             }
         });
+        
+        // Logout function
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+        
+        // Load dashboard data from Firestore
+        function loadDashboardData() {
+            // Hitung 7 hari yang lalu
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            // 1. Ambil data penjualan minggu ini
+            db.collection('penjualan')
+                .where('tanggal', '>=', oneWeekAgo)
+                .get()
+                .then((querySnapshot) => {
+                    let total = 0;
+                    querySnapshot.forEach((doc) => {
+                        total += doc.data().total || 0;
+                    });
+                    weeklySales.textContent = formatRupiah(total);
+                    
+                    // Tambahkan ke aktivitas
+                    addActivity({
+                        title: 'Penjualan Minggu Ini',
+                        description: `Total penjualan: ${formatRupiah(total)}`,
+                        icon: 'fas fa-chart-line',
+                        timestamp: new Date()
+                    });
+                });
+            
+            // 2. Ambil data barang masuk minggu ini
+            db.collection('barang')
+                .where('tanggal_masuk', '>=', oneWeekAgo)
+                .get()
+                .then((querySnapshot) => {
+                    weeklyStock.textContent = `${querySnapshot.size} item`;
+                    
+                    // Tambahkan ke aktivitas
+                    addActivity({
+                        title: 'Barang Masuk',
+                        description: `${querySnapshot.size} item baru masuk minggu ini`,
+                        icon: 'fas fa-box-open',
+                        timestamp: new Date()
+                    });
+                });
+            
+            // 3. Ambil total produk
+            db.collection('produk').get().then((querySnapshot) => {
+                totalProducts.textContent = querySnapshot.size;
+            });
+            
+            // 4. Ambil aktivitas terakhir (dummy data)
+            // Di implementasi nyata, Anda perlu koleksi 'aktivitas' di Firestore
+            setTimeout(() => {
+                activityList.innerHTML = '';
+                
+                // Contoh aktivitas
+                const sampleActivities = [
+                    {
+                        title: 'Pembelian Baru',
+                        description: 'Kitab Fathul Qorib terjual 3 buah',
+                        icon: 'fas fa-shopping-cart',
+                        timestamp: new Date(Date.now() - 3600000)
+                    },
+                    {
+                        title: 'Stok Diperbarui',
+                        description: 'Kitab Safinatun Najah ditambahkan 10 buah',
+                        icon: 'fas fa-boxes',
+                        timestamp: new Date(Date.now() - 86400000)
+                    },
+                    {
+                        title: 'Laporan Dibuat',
+                        description: 'Laporan harian telah digenerate',
+                        icon: 'fas fa-file-alt',
+                        timestamp: new Date(Date.now() - 172800000)
+                    }
+                ];
+                
+                sampleActivities.forEach(activity => {
+                    addActivity(activity);
+                });
+            }, 1000);
+        }
+        
+        // Add activity to the list
+        function addActivity(activity) {
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.innerHTML = `
+                <div class="activity-icon">
+                    <i class="${activity.icon}"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">${activity.title}</div>
+                    <div class="activity-description">${activity.description}</div>
+                    <div class="activity-time">${formatDate(activity.timestamp)}</div>
+                </div>
+            `;
+            
+            activityList.prepend(activityItem);
+        }
     </script>
 </body>
 </html>

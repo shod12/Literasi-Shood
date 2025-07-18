@@ -303,7 +303,7 @@
 
         .item-row {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr;
             gap: 15px;
             margin-bottom: 15px;
             align-items: end;
@@ -381,6 +381,35 @@
             transform: translateY(-3px);
         }
 
+        /* Autocomplete */
+        .autocomplete {
+            position: relative;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             header {
@@ -432,7 +461,7 @@
 
     <!-- Main Content -->
     <div class="container">
-        <a href="beranda.html" class="back-button">
+        <a href="menu.html" class="back-button">
             <i class="fas fa-arrow-left"></i> Kembali ke Menu
         </a>
         
@@ -491,26 +520,31 @@
                     <label for="keterangan">Keterangan</label>
                     <select id="keterangan" required>
                         <option value="">Pilih keterangan</option>
-                        <option value="Konsumen">Konsumen</option>
-                        <option value="Lembaga">Lembaga</option>
+                        <option value="konsumen">Konsumen</option>
+                        <option value="lembaga">Lembaga</option>
                     </select>
                 </div>
                 
                 <h4>Item Penjualan</h4>
                 <div id="itemsContainer">
                     <div class="item-row">
-                        <div>
+                        <div class="autocomplete">
                             <label>Nama Kitab</label>
-                            <select class="nama-kitab" required>
-                                <option value="">Pilih Kitab</option>
-                                <!-- Daftar kitab akan diisi oleh JavaScript -->
-                            </select>
+                            <input type="text" class="nama-kitab" placeholder="Nama kitab" required>
                         </div>
                         <div>
                             <label>Jumlah Kitab</label>
                             <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
                         </div>
+                        <div>
+                            <label>Harga Satuan</label>
+                            <input type="number" class="harga" placeholder="Harga" readonly>
+                        </div>
                     </div>
+                </div>
+                
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <h4>Total: Rp <span id="totalHarga">0</span></h4>
                 </div>
                 
                 <button class="add-item-btn" id="addItemBtn">
@@ -531,7 +565,7 @@
 
     <script>
         // Konfigurasi Firebase
-        const firebaseConfig = {
+       const firebaseConfig = {
   apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
   authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
   projectId: "koperasi-mahida-24f7b",
@@ -549,8 +583,8 @@
         const salesRef = db.collection("penjualan");
         const warehouseRef = db.collection("warehouse");
 
-        // Variabel global untuk menyimpan data kitab
-        let kitabList = [];
+        // Variabel untuk autocomplete
+        let allBooks = [];
 
         // Elemen DOM
         const addSaleBtn = document.getElementById('addSaleBtn');
@@ -562,16 +596,99 @@
         const itemsContainer = document.getElementById('itemsContainer');
         const salesTableBody = document.getElementById('salesTableBody');
         const logoutBtn = document.getElementById('logoutBtn');
+        const totalHargaElement = document.getElementById('totalHarga');
 
         // Set tanggal default ke hari ini
         document.getElementById('tanggal').valueAsDate = new Date();
 
-        // Buka modal
-        addSaleBtn.addEventListener('click', async () => {
-            // Muat daftar kitab dari gudang
-            await loadKitabList();
-            populateKitabDropdowns();
+        // Load data buku dari gudang
+        async function loadBooksData() {
+            try {
+                const snapshot = await warehouseRef.get();
+                allBooks = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    allBooks.push({
+                        id: doc.id,
+                        namaKitab: data.namaKitab,
+                        hargaJualKonsumen: data.hargaJualKonsumen,
+                        hargaJualLembaga: data.hargaJualLembaga,
+                        stok: data.stok
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading books:', error);
+            }
+        }
+
+        // Fungsi autocomplete
+        function setupAutocomplete(inputElement, hargaElement, keteranganElement) {
+            inputElement.addEventListener("input", function() {
+                const inputVal = this.value.toLowerCase();
+                const keterangan = keteranganElement ? keteranganElement.value : 'konsumen';
+                
+                // Cari buku yang sesuai
+                const matchedBooks = allBooks.filter(book => 
+                    book.namaKitab.toLowerCase().includes(inputVal)
+                );
+                
+                // Tampilkan hasil autocomplete
+                const autocompleteList = document.createElement("div");
+                autocompleteList.className = "autocomplete-items";
+                autocompleteList.id = "autocomplete-list-" + inputElement.id;
+                
+                // Hapus autocomplete sebelumnya
+                const existingList = document.getElementById("autocomplete-list-" + inputElement.id);
+                if (existingList) existingList.remove();
+                
+                // Tambahkan hasil ke autocomplete
+                matchedBooks.forEach(book => {
+                    const item = document.createElement("div");
+                    item.innerHTML = `<strong>${book.namaKitab}</strong> (Stok: ${book.stok})`;
+                    item.addEventListener("click", function() {
+                        inputElement.value = book.namaKitab;
+                        autocompleteList.remove();
+                        
+                        // Set harga berdasarkan keterangan
+                        if (keterangan === 'konsumen') {
+                            hargaElement.value = book.hargaJualKonsumen;
+                        } else {
+                            hargaElement.value = book.hargaJualLembaga;
+                        }
+                        
+                        // Hitung ulang total
+                        calculateTotal();
+                    });
+                    autocompleteList.appendChild(item);
+                });
+                
+                if (matchedBooks.length > 0) {
+                    this.parentNode.appendChild(autocompleteList);
+                }
+            });
             
+            // Tutup autocomplete saat klik di luar
+            document.addEventListener("click", function(e) {
+                if (!inputElement.contains(e.target)) {
+                    const autocompleteList = document.getElementById("autocomplete-list-" + inputElement.id);
+                    if (autocompleteList) autocompleteList.remove();
+                }
+            });
+        }
+
+        // Hitung total harga
+        function calculateTotal() {
+            let total = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const jumlah = parseInt(row.querySelector('.jumlah').value) || 0;
+                const harga = parseInt(row.querySelector('.harga').value) || 0;
+                total += jumlah * harga;
+            });
+            totalHargaElement.textContent = total.toLocaleString('id-ID');
+        }
+
+        // Buka modal
+        addSaleBtn.addEventListener('click', () => {
             salesModal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
@@ -586,68 +703,20 @@
         closeModal.addEventListener('click', closeModalFunc);
         cancelBtn.addEventListener('click', closeModalFunc);
 
-        // Muat daftar kitab dari gudang
-        async function loadKitabList() {
-            try {
-                const snapshot = await warehouseRef.get();
-                kitabList = [];
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    kitabList.push({
-                        id: doc.id,
-                        namaKitab: data.namaKitab,
-                        stok: data.stok,
-                        hargaJualKonsumen: data.hargaJualKonsumen,
-                        hargaJualLembaga: data.hargaJualLembaga
-                    });
-                });
-            } catch (error) {
-                console.error('Error loading kitab list:', error);
-                alert('Gagal memuat daftar kitab');
-            }
-        }
-
-        // Isi dropdown kitab
-        function populateKitabDropdowns() {
-            const dropdowns = document.querySelectorAll('.nama-kitab');
-            
-            dropdowns.forEach(dropdown => {
-                // Simpan nilai yang sudah dipilih
-                const selectedValue = dropdown.value;
-                
-                // Kosongkan dropdown
-                dropdown.innerHTML = '<option value="">Pilih Kitab</option>';
-                
-                // Tambahkan opsi kitab
-                kitabList.forEach(kitab => {
-                    const option = document.createElement('option');
-                    option.value = kitab.id;
-                    option.textContent = `${kitab.namaKitab} (Stok: ${kitab.stok})`;
-                    dropdown.appendChild(option);
-                });
-                
-                // Kembalikan nilai yang dipilih sebelumnya jika ada
-                if (selectedValue) {
-                    dropdown.value = selectedValue;
-                }
-            });
-        }
-
         // Tambah item baru
         addItemBtn.addEventListener('click', () => {
             const itemRow = document.createElement('div');
             itemRow.className = 'item-row';
             itemRow.innerHTML = `
+                <div class="autocomplete">
+                    <input type="text" class="nama-kitab" placeholder="Nama kitab" required>
+                </div>
                 <div>
-                    <select class="nama-kitab" required>
-                        <option value="">Pilih Kitab</option>
-                        <!-- Daftar kitab akan diisi oleh JavaScript -->
-                    </select>
+                    <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <div style="flex: 1;">
-                        <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
+                        <input type="number" class="harga" placeholder="Harga" readonly>
                     </div>
                     <button class="remove-item-btn" type="button">
                         <i class="fas fa-trash"></i>
@@ -655,19 +724,22 @@
                 </div>
             `;
             
-            // Isi dropdown kitab untuk item baru
-            const dropdown = itemRow.querySelector('.nama-kitab');
-            kitabList.forEach(kitab => {
-                const option = document.createElement('option');
-                option.value = kitab.id;
-                option.textContent = `${kitab.namaKitab} (Stok: ${kitab.stok})`;
-                dropdown.appendChild(option);
-            });
+            // Setup autocomplete untuk item baru
+            const namaKitabInput = itemRow.querySelector('.nama-kitab');
+            const hargaInput = itemRow.querySelector('.harga');
+            const keteranganSelect = document.getElementById('keterangan');
+            
+            setupAutocomplete(namaKitabInput, hargaInput, keteranganSelect);
+            
+            // Tambahkan event listener untuk jumlah
+            const jumlahInput = itemRow.querySelector('.jumlah');
+            jumlahInput.addEventListener('input', calculateTotal);
             
             // Tambahkan fungsi untuk menghapus item
             const removeBtn = itemRow.querySelector('.remove-item-btn');
             removeBtn.addEventListener('click', () => {
                 itemRow.remove();
+                calculateTotal();
             });
             
             itemsContainer.appendChild(itemRow);
@@ -688,9 +760,13 @@
             const firstItem = document.querySelector('.item-row');
             firstItem.querySelector('.nama-kitab').value = '';
             firstItem.querySelector('.jumlah').value = '';
+            firstItem.querySelector('.harga').value = '';
+            
+            // Reset total
+            totalHargaElement.textContent = '0';
         }
 
-        // Simpan data penjualan ke Firebase
+        // Simpan data ke Firebase
         saveBtn.addEventListener('click', async () => {
             const tanggal = document.getElementById('tanggal').value;
             const nama = document.getElementById('nama').value;
@@ -707,47 +783,43 @@
             let isValid = true;
             
             document.querySelectorAll('.item-row').forEach(row => {
-                const kitabId = row.querySelector('.nama-kitab').value;
+                const namaKitab = row.querySelector('.nama-kitab').value;
                 const jumlah = parseInt(row.querySelector('.jumlah').value);
-                
-                // Cari data kitab
-                const selectedKitab = kitabList.find(kitab => kitab.id === kitabId);
+                const harga = parseInt(row.querySelector('.harga').value);
                 
                 // Validasi item
-                if (!kitabId || !jumlah || !selectedKitab) {
+                if (!namaKitab || !jumlah || !harga) {
                     isValid = false;
                     return;
                 }
-                
-                // Validasi stok
-                if (jumlah > selectedKitab.stok) {
-                    alert(`Stok ${selectedKitab.namaKitab} tidak mencukupi! Stok tersedia: ${selectedKitab.stok}`);
-                    isValid = false;
-                    return;
-                }
-                
-                // Tentukan harga berdasarkan keterangan
-                const hargaSatuan = keterangan === 'Konsumen' 
-                    ? selectedKitab.hargaJualKonsumen 
-                    : selectedKitab.hargaJualLembaga;
                 
                 items.push({
-                    kitabId,
-                    namaKitab: selectedKitab.namaKitab,
+                    namaKitab,
                     jumlah,
-                    hargaSatuan,
-                    total: jumlah * hargaSatuan
+                    harga,
+                    total: jumlah * harga
                 });
             });
             
-            if (!isValid || items.length === 0) {
+            if (!isValid) {
                 alert('Harap isi semua field item dengan benar!');
                 return;
             }
             
+            // Validasi stok
             try {
-                // Hitung total penjualan
-                const totalPenjualan = items.reduce((sum, item) => sum + item.total, 0);
+                for (const item of items) {
+                    const book = allBooks.find(b => b.namaKitab === item.namaKitab);
+                    if (!book) {
+                        alert(`Kitab "${item.namaKitab}" tidak ditemukan di gudang!`);
+                        return;
+                    }
+                    
+                    if (book.stok < item.jumlah) {
+                        alert(`Stok kitab "${item.namaKitab}" tidak mencukupi! Stok tersedia: ${book.stok}`);
+                        return;
+                    }
+                }
                 
                 // Simpan ke Firestore
                 await salesRef.add({
@@ -755,26 +827,26 @@
                     nama,
                     keterangan,
                     items,
-                    totalPenjualan,
+                    total: items.reduce((sum, item) => sum + item.total, 0),
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 // Update stok di gudang
                 const batch = db.batch();
-                
-                items.forEach(item => {
-                    const kitabRef = warehouseRef.doc(item.kitabId);
-                    batch.update(kitabRef, {
+                for (const item of items) {
+                    const book = allBooks.find(b => b.namaKitab === item.namaKitab);
+                    const bookRef = warehouseRef.doc(book.id);
+                    batch.update(bookRef, {
                         stok: firebase.firestore.FieldValue.increment(-item.jumlah),
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                });
-                
+                }
                 await batch.commit();
                 
                 alert('Data penjualan berhasil disimpan!');
                 closeModalFunc();
                 loadSalesData();
+                
             } catch (error) {
                 console.error('Error saving data: ', error);
                 alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
@@ -804,10 +876,10 @@
                             <td>${nomor}</td>
                             <td>${tanggal}</td>
                             <td>${data.nama}</td>
-                            <td>${data.keterangan}</td>
+                            <td>${data.keterangan === 'konsumen' ? 'Konsumen' : 'Lembaga'}</td>
                             <td>${item.namaKitab}</td>
                             <td>${item.jumlah}</td>
-                            <td>Rp ${item.hargaSatuan.toLocaleString('id-ID')}</td>
+                            <td>Rp ${item.harga.toLocaleString('id-ID')}</td>
                             <td>Rp ${item.total.toLocaleString('id-ID')}</td>
                             <td class="actions">
                                 <button class="btn-edit"><i class="fas fa-edit"></i></button>
@@ -832,21 +904,23 @@
                                     
                                     // Update stok di gudang
                                     const batch = db.batch();
-                                    
-                                    data.items.forEach(item => {
-                                        const kitabRef = warehouseRef.doc(item.kitabId);
-                                        batch.update(kitabRef, {
-                                            stok: firebase.firestore.FieldValue.increment(item.jumlah),
-                                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                                        });
-                                    });
-                                    
+                                    for (const item of data.items) {
+                                        const book = allBooks.find(b => b.namaKitab === item.namaKitab);
+                                        if (book) {
+                                            const bookRef = warehouseRef.doc(book.id);
+                                            batch.update(bookRef, {
+                                                stok: firebase.firestore.FieldValue.increment(item.jumlah),
+                                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                            });
+                                        }
+                                    }
                                     await batch.commit();
                                 }
                                 
                                 // Hapus data penjualan
                                 await salesRef.doc(id).delete();
                                 loadSalesData();
+                                
                             } catch (error) {
                                 console.error('Error deleting document: ', error);
                                 alert('Terjadi kesalahan saat menghapus data');
@@ -874,13 +948,42 @@
         });
 
         // Muat data saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Cek status login
-            auth.onAuthStateChanged(user => {
+            auth.onAuthStateChanged(async user => {
                 if (!user) {
                     window.location.href = 'index.html';
                 } else {
+                    // Muat data buku dan penjualan
+                    await loadBooksData();
                     loadSalesData();
+                    
+                    // Setup autocomplete untuk item pertama
+                    const firstItem = document.querySelector('.item-row');
+                    if (firstItem) {
+                        const namaKitabInput = firstItem.querySelector('.nama-kitab');
+                        const hargaInput = firstItem.querySelector('.harga');
+                        const keteranganSelect = document.getElementById('keterangan');
+                        
+                        setupAutocomplete(namaKitabInput, hargaInput, keteranganSelect);
+                        
+                        // Tambahkan event listener untuk jumlah
+                        const jumlahInput = firstItem.querySelector('.jumlah');
+                        jumlahInput.addEventListener('input', calculateTotal);
+                        
+                        // Update harga saat keterangan berubah
+                        keteranganSelect.addEventListener('change', () => {
+                            if (namaKitabInput.value) {
+                                const book = allBooks.find(b => b.namaKitab === namaKitabInput.value);
+                                if (book) {
+                                    hargaInput.value = keteranganSelect.value === 'konsumen' 
+                                        ? book.hargaJualKonsumen 
+                                        : book.hargaJualLembaga;
+                                    calculateTotal();
+                                }
+                            }
+                        });
+                    }
                 }
             });
         });

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan - Koperasi Mahida</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #B8860B;
+            --light-gold: #FFD700;
+            --cream: #FFF8E1;
+            --dark: #2C2416;
+            --light: #FFFFFF;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(to right, var(--dark), var(--dark-gold));
+            padding: 1rem 5%;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--light-gold);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--cream);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--gold);
+            color: var(--dark);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            display: inline-block;
+            padding: 0 20px;
+            background: var(--cream);
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            z-index: 0;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--light);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px var(--shadow);
+            overflow-x: auto;
+            margin-bottom: 4rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        thead {
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: var(--light);
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-edit:hover, .btn-delete:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Floating Action Button */
+        .fab-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .fab {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: end;
+        }
+
+        .add-item-btn {
+            background: var(--dark-gold);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .add-item-btn:hover {
+            background: var(--dark);
+        }
+
+        .remove-item-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-save, .btn-cancel {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-save {
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: var(--dark);
+        }
+
+        .btn-save:hover, .btn-cancel:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .item-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-book logo-icon"></i>
+            <div class="logo-text">Koperasi Mahida</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="menu.html">Menu</a></li>
+                <li><a href="pemasukan.html">Pemasukan</a></li>
+                <li><a href="penjualan.html" class="active">Penjualan</a></li>
+                <li><a href="laporan.html">Laporan</a></li>
+                <li><a href="#" id="logoutBtn">Keluar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <a href="beranda.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Kembali ke Menu
+        </a>
+        
+        <div class="section-title">
+            <h2>Data Penjualan</h2>
+        </div>
+        
+        <div class="table-container">
+            <table id="salesTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Nama</th>
+                        <th>Keterangan</th>
+                        <th>Nama Kitab</th>
+                        <th>Jumlah Kitab</th>
+                        <th>Harga Satuan</th>
+                        <th>Total Harga</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTableBody">
+                    <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab-container">
+        <div class="fab" id="addSaleBtn">
+            <i class="fas fa-plus"></i>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal-overlay" id="salesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tambah Data Penjualan</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="tanggal">Tanggal</label>
+                    <input type="date" id="tanggal" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="nama">Nama Pembeli</label>
+                    <input type="text" id="nama" placeholder="Nama pembeli" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="keterangan">Keterangan</label>
+                    <select id="keterangan" required>
+                        <option value="">Pilih keterangan</option>
+                        <option value="Konsumen">Konsumen</option>
+                        <option value="Lembaga">Lembaga</option>
+                    </select>
+                </div>
+                
+                <h4>Item Penjualan</h4>
+                <div id="itemsContainer">
+                    <div class="item-row">
+                        <div>
+                            <label>Nama Kitab</label>
+                            <select class="nama-kitab" required>
+                                <option value="">Pilih Kitab</option>
+                                <!-- Daftar kitab akan diisi oleh JavaScript -->
+                            </select>
+                        </div>
+                        <div>
+                            <label>Jumlah Kitab</label>
+                            <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="add-item-btn" id="addItemBtn">
+                    <i class="fas fa-plus"></i> Tambah Item
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancelBtn">Batal</button>
+                <button class="btn-save" id="saveBtn">Simpan Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
+  authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
+  projectId: "koperasi-mahida-24f7b",
+  storageBucket: "koperasi-mahida-24f7b.firebasestorage.app",
+  messagingSenderId: "399595189627",
+  appId: "1:399595189627:web:eaedd97ba36718206bb9de"
+};
+
+        // Inisialisasi Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Referensi ke koleksi
+        const salesRef = db.collection("penjualan");
+        const warehouseRef = db.collection("warehouse");
+
+        // Variabel global untuk menyimpan data kitab
+        let kitabList = [];
+
+        // Elemen DOM
+        const addSaleBtn = document.getElementById('addSaleBtn');
+        const salesModal = document.getElementById('salesModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const itemsContainer = document.getElementById('itemsContainer');
+        const salesTableBody = document.getElementById('salesTableBody');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Set tanggal default ke hari ini
+        document.getElementById('tanggal').valueAsDate = new Date();
+
+        // Buka modal
+        addSaleBtn.addEventListener('click', async () => {
+            // Muat daftar kitab dari gudang
+            await loadKitabList();
+            populateKitabDropdowns();
+            
+            salesModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Tutup modal
+        function closeModalFunc() {
+            salesModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            resetForm();
+        }
+
+        closeModal.addEventListener('click', closeModalFunc);
+        cancelBtn.addEventListener('click', closeModalFunc);
+
+        // Muat daftar kitab dari gudang
+        async function loadKitabList() {
+            try {
+                const snapshot = await warehouseRef.get();
+                kitabList = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    kitabList.push({
+                        id: doc.id,
+                        namaKitab: data.namaKitab,
+                        stok: data.stok,
+                        hargaJualKonsumen: data.hargaJualKonsumen,
+                        hargaJualLembaga: data.hargaJualLembaga
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading kitab list:', error);
+                alert('Gagal memuat daftar kitab');
+            }
+        }
+
+        // Isi dropdown kitab
+        function populateKitabDropdowns() {
+            const dropdowns = document.querySelectorAll('.nama-kitab');
+            
+            dropdowns.forEach(dropdown => {
+                // Simpan nilai yang sudah dipilih
+                const selectedValue = dropdown.value;
+                
+                // Kosongkan dropdown
+                dropdown.innerHTML = '<option value="">Pilih Kitab</option>';
+                
+                // Tambahkan opsi kitab
+                kitabList.forEach(kitab => {
+                    const option = document.createElement('option');
+                    option.value = kitab.id;
+                    option.textContent = `${kitab.namaKitab} (Stok: ${kitab.stok})`;
+                    dropdown.appendChild(option);
+                });
+                
+                // Kembalikan nilai yang dipilih sebelumnya jika ada
+                if (selectedValue) {
+                    dropdown.value = selectedValue;
+                }
+            });
+        }
+
+        // Tambah item baru
+        addItemBtn.addEventListener('click', () => {
+            const itemRow = document.createElement('div');
+            itemRow.className = 'item-row';
+            itemRow.innerHTML = `
+                <div>
+                    <select class="nama-kitab" required>
+                        <option value="">Pilih Kitab</option>
+                        <!-- Daftar kitab akan diisi oleh JavaScript -->
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
+                    </div>
+                    <button class="remove-item-btn" type="button">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Isi dropdown kitab untuk item baru
+            const dropdown = itemRow.querySelector('.nama-kitab');
+            kitabList.forEach(kitab => {
+                const option = document.createElement('option');
+                option.value = kitab.id;
+                option.textContent = `${kitab.namaKitab} (Stok: ${kitab.stok})`;
+                dropdown.appendChild(option);
+            });
+            
+            // Tambahkan fungsi untuk menghapus item
+            const removeBtn = itemRow.querySelector('.remove-item-btn');
+            removeBtn.addEventListener('click', () => {
+                itemRow.remove();
+            });
+            
+            itemsContainer.appendChild(itemRow);
+        });
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('nama').value = '';
+            document.getElementById('keterangan').value = '';
+            
+            // Hapus semua item kecuali yang pertama
+            const items = document.querySelectorAll('.item-row');
+            items.forEach((item, index) => {
+                if (index > 0) item.remove();
+            });
+            
+            // Reset item pertama
+            const firstItem = document.querySelector('.item-row');
+            firstItem.querySelector('.nama-kitab').value = '';
+            firstItem.querySelector('.jumlah').value = '';
+        }
+
+        // Simpan data penjualan ke Firebase
+        saveBtn.addEventListener('click', async () => {
+            const tanggal = document.getElementById('tanggal').value;
+            const nama = document.getElementById('nama').value;
+            const keterangan = document.getElementById('keterangan').value;
+            
+            // Validasi input
+            if (!tanggal || !nama || !keterangan) {
+                alert('Harap isi semua field utama!');
+                return;
+            }
+            
+            // Kumpulkan item
+            const items = [];
+            let isValid = true;
+            
+            document.querySelectorAll('.item-row').forEach(row => {
+                const kitabId = row.querySelector('.nama-kitab').value;
+                const jumlah = parseInt(row.querySelector('.jumlah').value);
+                
+                // Cari data kitab
+                const selectedKitab = kitabList.find(kitab => kitab.id === kitabId);
+                
+                // Validasi item
+                if (!kitabId || !jumlah || !selectedKitab) {
+                    isValid = false;
+                    return;
+                }
+                
+                // Validasi stok
+                if (jumlah > selectedKitab.stok) {
+                    alert(`Stok ${selectedKitab.namaKitab} tidak mencukupi! Stok tersedia: ${selectedKitab.stok}`);
+                    isValid = false;
+                    return;
+                }
+                
+                // Tentukan harga berdasarkan keterangan
+                const hargaSatuan = keterangan === 'Konsumen' 
+                    ? selectedKitab.hargaJualKonsumen 
+                    : selectedKitab.hargaJualLembaga;
+                
+                items.push({
+                    kitabId,
+                    namaKitab: selectedKitab.namaKitab,
+                    jumlah,
+                    hargaSatuan,
+                    total: jumlah * hargaSatuan
+                });
+            });
+            
+            if (!isValid || items.length === 0) {
+                alert('Harap isi semua field item dengan benar!');
+                return;
+            }
+            
+            try {
+                // Hitung total penjualan
+                const totalPenjualan = items.reduce((sum, item) => sum + item.total, 0);
+                
+                // Simpan ke Firestore
+                await salesRef.add({
+                    tanggal: new Date(tanggal),
+                    nama,
+                    keterangan,
+                    items,
+                    totalPenjualan,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update stok di gudang
+                const batch = db.batch();
+                
+                items.forEach(item => {
+                    const kitabRef = warehouseRef.doc(item.kitabId);
+                    batch.update(kitabRef, {
+                        stok: firebase.firestore.FieldValue.increment(-item.jumlah),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                
+                await batch.commit();
+                
+                alert('Data penjualan berhasil disimpan!');
+                closeModalFunc();
+                loadSalesData();
+            } catch (error) {
+                console.error('Error saving data: ', error);
+                alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
+            }
+        });
+
+        // Muat data penjualan dari Firestore
+        async function loadSalesData() {
+            try {
+                const snapshot = await salesRef.orderBy('createdAt', 'desc').get();
+                salesTableBody.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    salesTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Belum ada data penjualan</td></tr>';
+                    return;
+                }
+                
+                let nomor = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tanggal = data.tanggal.toDate().toLocaleDateString('id-ID');
+                    
+                    // Loop melalui setiap item
+                    data.items.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${nomor}</td>
+                            <td>${tanggal}</td>
+                            <td>${data.nama}</td>
+                            <td>${data.keterangan}</td>
+                            <td>${item.namaKitab}</td>
+                            <td>${item.jumlah}</td>
+                            <td>Rp ${item.hargaSatuan.toLocaleString('id-ID')}</td>
+                            <td>Rp ${item.total.toLocaleString('id-ID')}</td>
+                            <td class="actions">
+                                <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        `;
+                        salesTableBody.appendChild(row);
+                        nomor++;
+                    });
+                });
+                
+                // Tambahkan event listener untuk tombol hapus
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.getAttribute('data-id');
+                        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                            try {
+                                // Ambil data penjualan untuk mengembalikan stok
+                                const doc = await salesRef.doc(id).get();
+                                if (doc.exists) {
+                                    const data = doc.data();
+                                    
+                                    // Update stok di gudang
+                                    const batch = db.batch();
+                                    
+                                    data.items.forEach(item => {
+                                        const kitabRef = warehouseRef.doc(item.kitabId);
+                                        batch.update(kitabRef, {
+                                            stok: firebase.firestore.FieldValue.increment(item.jumlah),
+                                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                        });
+                                    });
+                                    
+                                    await batch.commit();
+                                }
+                                
+                                // Hapus data penjualan
+                                await salesRef.doc(id).delete();
+                                loadSalesData();
+                            } catch (error) {
+                                console.error('Error deleting document: ', error);
+                                alert('Terjadi kesalahan saat menghapus data');
+                            }
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading data: ', error);
+                salesTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: red;">Gagal memuat data</td></tr>';
+            }
+        }
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                auth.signOut().then(() => {
+                    window.location.href = 'index.html';
+                }).catch(error => {
+                    console.error('Logout error: ', error);
+                    alert('Terjadi kesalahan saat logout');
+                });
+            }
+        });
+
+        // Muat data saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cek status login
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    window.location.href = 'index.html';
+                } else {
+                    loadSalesData();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Koperasi Mahida</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #B8860B;
+            --light-gold: #FFD700;
+            --cream: #FFF8E1;
+            --dark: #2C2416;
+            --light: #FFFFFF;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(to right, var(--dark), var(--dark-gold));
+            padding: 1rem 5%;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--light-gold);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--cream);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--gold);
+            color: var(--dark);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            display: inline-block;
+            padding: 0 20px;
+            background: var(--cream);
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            z-index: 0;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 4rem;
+        }
+
+        .dashboard-card {
+            background: var(--light);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px var(--shadow);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-header {
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: var(--light);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .card-header i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card-header h3 {
+            font-size: 1.6rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+            color: var(--dark);
+        }
+
+        .card-body p {
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Notifications */
+        .notification {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .notification:hover {
+            background: var(--cream);
+        }
+
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--light-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .notification-icon i {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .notification-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .notification-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* Menu Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin: 3rem 0;
+        }
+
+        .menu-card {
+            background: var(--light);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .menu-icon {
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            padding: 25px 0;
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .menu-content {
+            padding: 20px 15px;
+            flex-grow: 1;
+        }
+
+        .menu-content h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .menu-content p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .btn-menu {
+            display: inline-block;
+            padding: 10px 25px;
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-menu:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--cream);
+            padding: 3rem 5%;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            text-align: left;
+        }
+
+        .footer-column h3 {
+            color: var(--light-gold);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--gold);
+        }
+
+        .footer-column p, .footer-column li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li i {
+            color: var(--light-gold);
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-book logo-icon"></i>
+            <div class="logo-text">Koperasi Mahida</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">Menu</a></li>
+                <li><a href="pemasukan.html">Pemasukan</a></li>
+                <li><a href="penjualan.html">Penjualan</a></li>
+                <li><a href="laporan.html">Laporan</a></li>
+                <li><a href="#">Keluar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="section-title">
+            <h2>Dashboard Sistem Akuntansi</h2>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Notifikasi Penjualan -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Pemberitahuan Penjualan</h3>
+                </div>
+                <div class="card-body">
+                    <div class="notification">
+                        <div class="notification-icon">
+                            <i class="fas fa-exclamation"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Penjualan Tertinggi Hari Ini</h4>
+                            <p>Kitab Fiqh Terjual 25 eksemplar</p>
+                            <div class="notification-time">1 jam yang lalu</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification">
+                        <div class="notification-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Produk Terlaris</h4>
+                            <p>Kitab Hadits Arbain Terjual 120 eksemplar bulan ini</p>
+                            <div class="notification-time">3 jam yang lalu</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification">
+                        <div class="notification-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Statistik Penjualan</h4>
+                            <p>Peningkatan 15% dibanding bulan lalu</p>
+                            <div class="notification-time">Kemarin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifikasi Barang Masuk -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-box-open"></i>
+                    <h3>Pemberitahuan Barang Masuk</h3>
+                </div>
+                <div class="card-body">
+                    <div class="notification">
+                        <div class="notification-icon">
+                            <i class="fas fa-truck-loading"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Barang Baru Datang</h4>
+                            <p>Kitab Tafsir Ibnu Katsir - 50 eksemplar</p>
+                            <div class="notification-time">30 menit yang lalu</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification">
+                        <div class="notification-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Stok Hampir Habis</h4>
+                            <p>Kitab Bahasa Arab hanya tersisa 5 eksemplar</p>
+                            <div class="notification-time">2 jam yang lalu</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification">
+                        <div class="notification-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Pesanan Akan Datang</h4>
+                            <p>Kitab Shahih Bukhari - 100 eksemplar tgl 25 Juli</p>
+                            <div class="notification-time">Kemarin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistik Cepat -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Statistik Cepat</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item">
+                        <h4><i class="fas fa-wallet"></i> Total Pemasukan Bulan Ini</h4>
+                        <p>Rp 15.750.000</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <h4><i class="fas fa-money-bill-wave"></i> Total Penjualan Hari Ini</h4>
+                        <p>Rp 2.350.000</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <h4><i class="fas fa-boxes"></i> Stok Tersedia</h4>
+                        <p>1.245 eksemplar</p>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <h4><i class="fas fa-users"></i> Anggota Aktif</h4>
+                        <p>245 anggota</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title">
+            <h2>Menu Utama</h2>
+        </div>
+        
+        <!-- Menu Grid -->
+        <div class="menu-grid">
+            <div class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="menu-content">
+                    <h3>Pemasukan</h3>
+                    <p>Kelola semua transaksi pemasukan dan pendapatan koperasi</p>
+                    <a href="pemasukan.html" class="btn-menu">Buka Menu</a>
+                </div>
+            </div>
+            
+            <div class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-cash-register"></i>
+                </div>
+                <div class="menu-content">
+                    <h3>Penjualan</h3>
+                    <p>Kelola transaksi penjualan dan faktur penjualan</p>
+                    <a href="penjualan.html" class="btn-menu">Buka Menu</a>
+                </div>
+            </div>
+            
+            <div class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="menu-content">
+                    <h3>Laporan</h3>
+                    <p>Lihat dan cetak laporan keuangan koperasi</p>
+                    <a href="laporan.html" class="btn-menu">Buka Menu</a>
+                </div>
+            </div>
+            
+            <div class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="menu-content">
+                    <h3>Stok Barang</h3>
+                    <p>Kelola stok kitab dan inventaris koperasi</p>
+                    <a href="#" class="btn-menu">Buka Menu</a>
+                </div>
+            </div>
+            
+            <div class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="menu-content">
+                    <h3>Anggota</h3>
+                    <p>Kelola data anggota dan simpanan koperasi</p>
+                    <a href="#" class="btn-menu">Buka Menu</a>
+                </div>
+            </div>
+            
+            <div class="menu-card">
+                <div class="menu-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="menu-content">
+                    <h3>Pengaturan</h3>
+                    <p>Pengaturan sistem dan preferensi akun</p>
+                    <a href="#" class="btn-menu">Buka Menu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Tentang Kami</h3>
+                <p>Koperasi Mahida adalah toko kitab yang menyediakan berbagai kebutuhan literatur keislaman dengan sistem koperasi yang mengutamakan kesejahteraan anggota.</p>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Kontak Kami</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> Pondok Pesantren Manbaul Hidayah, RT.1/RW.4, Kedawung, Nglegok, Blitar </li>
+                    <li><i class="fab fa-whatsapp"></i> 0857-3504-1602</li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Jam Operasional</h3>
+                <ul>
+                    <li><i class="far fa-clock"></i> Senin-Jumat: 08:00 - 17:00</li>
+                    <li><i class="far fa-clock"></i> Sabtu: 08:00 - 15:00</li>
+                    <li><i class="far fa-clock"></i> Minggu & Hari Libur: Tutup</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 Koperasi Mahida. Hak Cipta Dilindungi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fungsi untuk logout
+        document.querySelector('a[href="#"]:last-child').addEventListener('click', function(e) {
+            e.preventDefault();
+            if(confirm('Apakah Anda yakin ingin keluar?')) {
+                // Di sini akan ada kode untuk logout dari Firebase
+                alert('Anda telah logout. Mengarahkan ke halaman login...');
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // Fungsi untuk menampilkan waktu real-time
+        function updateClock() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const dateStr = now.toLocaleDateString('id-ID', options);
+            
+            const clockElement = document.getElementById('live-clock');
+            if(clockElement) {
+                clockElement.textContent = dateStr;
+            }
+        }
+        const firebaseConfig = {
+  apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
+  authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
+  projectId: "koperasi-mahida-24f7b",
+  storageBucket: "koperasi-mahida-24f7b.firebasestorage.app",
+  messagingSenderId: "399595189627",
+  appId: "1:399595189627:web:eaedd97ba36718206bb9de"
+};
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        // Update jam setiap detik
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

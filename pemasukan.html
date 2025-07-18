@@ -1,30 +1,34 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemasukan - Koperasi Mahida</title>
-    <!-- Import Firebase -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #FFD700;
-            --secondary-color: #D4AF37;
-            --dark-color: #6B5B00;
-            --light-color: #FFF8DC;
+            --primary: #FFD700;
+            --secondary: #D4AF37;
+            --dark: #6B5B00;
+            --light: #FFF8DC;
+            --danger: #dc3545;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light-color);
+            background-color: var(--light);
             color: #333;
             overflow-x: hidden;
         }
@@ -36,11 +40,20 @@
         }
         
         header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 20px 0;
+            padding: 15px 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-bottom: 4px solid var(--dark-color);
+            border-bottom: 4px solid var(--dark);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .logo {
@@ -49,26 +62,19 @@
             gap: 15px;
         }
         
-        .logo img {
-            height: 50px;
+        .logo i {
+            font-size: 2rem;
         }
         
         .logo-text h1 {
+            font-size: 1.5rem;
             margin: 0;
-            font-size: 1.8rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
         
         .logo-text p {
+            font-size: 0.8rem;
             margin: 0;
-            font-size: 0.9rem;
             opacity: 0.9;
-        }
-        
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         
         .user-profile {
@@ -79,11 +85,6 @@
             padding: 8px 15px;
             border-radius: 50px;
             cursor: pointer;
-            position: relative;
-        }
-        
-        .user-profile:hover {
-            background-color: rgba(255, 255, 255, 0.3);
         }
         
         .user-profile img {
@@ -93,61 +94,21 @@
             object-fit: cover;
         }
         
-        .user-profile .user-info {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .user-profile .name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .user-profile .role {
-            font-size: 0.7rem;
-            opacity: 0.8;
-        }
-        
-        .user-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            width: 200px;
-            padding: 10px 0;
-            display: none;
-            z-index: 100;
-        }
-        
-        .user-profile:hover .user-dropdown {
-            display: block;
-        }
-        
-        .user-dropdown a {
-            display: block;
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding: 8px 15px;
-            color: #333;
+            background-color: var(--dark);
+            color: white;
             text-decoration: none;
-            transition: background-color 0.2s;
+            border-radius: 5px;
+            margin: 15px 0;
+            transition: background-color 0.3s;
         }
         
-        .user-dropdown a:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .user-dropdown a i {
-            margin-right: 8px;
-            width: 20px;
-            text-align: center;
-        }
-        
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            margin-top: 30px;
+        .btn-back:hover {
+            background-color: #5a4d00;
         }
         
         .tabs {
@@ -166,12 +127,18 @@
         }
         
         .tab.active {
-            color: var(--dark-color);
-            border-bottom-color: var(--primary-color);
+            color: var(--dark);
+            border-bottom-color: var(--primary);
         }
         
         .tab-content {
             display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .tab-content.active {
@@ -179,16 +146,17 @@
         }
         
         .table-container {
-            overflow-x: auto;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            padding: 20px;
+            padding: 15px;
+            overflow-x: auto;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
         
         th, td {
@@ -199,12 +167,37 @@
         
         th {
             background-color: #FFF9E6;
-            color: var(--dark-color);
+            color: var(--dark);
             font-weight: 600;
+            position: sticky;
+            top: 0;
         }
         
         tr:hover {
             background-color: #f9f9f9;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-usmani {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .badge-mahida {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .badge-nonusmani {
+            background-color: #f3e5f5;
+            color: #8e24aa;
         }
         
         .action-buttons {
@@ -217,21 +210,22 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
         
         .btn-edit {
-            background-color: var(--primary-color);
-            color: var(--dark-color);
+            background-color: var(--primary);
+            color: var(--dark);
         }
         
         .btn-delete {
-            background-color: #ff6b6b;
+            background-color: var(--danger);
             color: white;
         }
         
         .btn-action:hover {
             opacity: 0.8;
+            transform: translateY(-1px);
         }
         
         .fab-container {
@@ -245,8 +239,8 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background-color: var(--primary-color);
-            color: var(--dark-color);
+            background-color: var(--primary);
+            color: var(--dark);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -257,25 +251,32 @@
         
         .fab:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
         
         .fab i {
-            font-size: 24px;
+            font-size: 1.5rem;
         }
         
-        .modal {
-            display: none;
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            display: flex;
             justify-content: center;
             align-items: center;
-            overflow-y: auto;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
         
         .modal-content {
@@ -286,7 +287,12 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
         }
         
         .modal-header {
@@ -299,7 +305,10 @@
         
         .modal-header h2 {
             margin: 0;
-            color: var(--dark-color);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .close-modal {
@@ -325,12 +334,22 @@
             color: #555;
         }
         
-        .form-group input, .form-group select {
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, 
+        .form-group select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
         }
         
         .form-row {
@@ -346,36 +365,57 @@
             margin-top: 20px;
         }
         
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
         .item-row {
             display: flex;
             gap: 15px;
             margin-bottom: 15px;
             align-items: flex-end;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            position: relative;
         }
         
         .item-row .form-group {
             margin-bottom: 0;
         }
         
+        .btn-remove-item {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
         .btn-add-item {
-            background-color: var(--primary-color);
-            color: var(--dark-color);
+            background-color: var(--primary);
+            color: var(--dark);
             border: none;
             border-radius: 5px;
             padding: 10px 15px;
             cursor: pointer;
             font-weight: 600;
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
         }
         
-        .btn-remove-item {
-            background-color: #ff6b6b;
+        .btn-add-item:hover {
+            background-color: var(--secondary);
             color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            cursor: pointer;
-            margin-bottom: 10px;
         }
         
         .modal-footer {
@@ -392,12 +432,20 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--dark-color);
+            background-color: var(--primary);
+            color: var(--dark);
             border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            color: white;
         }
         
         .btn-secondary {
@@ -406,27 +454,28 @@
             border: none;
         }
         
-        .btn-primary:hover, .btn-secondary:hover {
-            opacity: 0.8;
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
         }
         
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 15px;
-            background-color: var(--dark-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
         }
         
-        .btn-back:hover {
-            background-color: #5a4d00;
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
         }
         
         @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
             .form-row, .item-row {
                 flex-direction: column;
                 gap: 10px;
@@ -435,33 +484,29 @@
             .modal-content {
                 width: 95%;
             }
+            
+            table {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <nav>
+            <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-book-open" style="font-size: 2.5rem; color: white;"></i>
+                    <i class="fas fa-book-open"></i>
                     <div class="logo-text">
                         <h1>Koperasi Mahida</h1>
                         <p>Sistem Akuntansi Toko Kitab</p>
                     </div>
                 </div>
                 <div class="user-profile">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B5B00&color=fff" alt="User" id="userAvatar">
-                    <div class="user-info">
-                        <span class="name" id="userName">Loading...</span>
-                        <span class="role" id="userRole">Admin</span>
-                    </div>
-                    <div class="user-dropdown">
-                        <a href="#"><i class="fas fa-user-cog"></i> Profil</a>
-                        <a href="#"><i class="fas fa-cog"></i> Pengaturan</a>
-                        <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=fff&color=6B5B00" alt="User" id="userAvatar">
+                    <span id="userName">Admin</span>
                 </div>
-            </nav>
+            </div>
         </div>
     </header>
     
@@ -470,61 +515,67 @@
             <i class="fas fa-arrow-left"></i> Kembali ke Beranda
         </a>
         
-        <div class="main-content">
-            <div class="tabs">
-                <div class="tab active" data-tab="gudang">Gudang</div>
-                <div class="tab" data-tab="pemasukan">Pemasukan Barang</div>
+        <h1><i class="fas fa-boxes"></i> Manajemen Pemasukan Barang</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="gudang">Gudang</div>
+            <div class="tab" data-tab="pemasukan">Pemasukan Barang</div>
+        </div>
+        
+        <!-- Tab Gudang -->
+        <div class="tab-content active" id="gudang">
+            <div class="table-container">
+                <table id="gudangTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Barang</th>
+                            <th>Keterangan</th>
+                            <th>Stok</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual Lembaga</th>
+                            <th>Harga Jual Konsumen</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <p>Data gudang sedang dimuat...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
-            <div class="tab-content active" id="gudang">
-                <div class="table-container">
-                    <table id="gudangTable">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Barang</th>
-                                <th>Keterangan</th>
-                                <th>Stok</th>
-                                <th>Harga Beli</th>
-                                <th>Harga Jual Lembaga</th>
-                                <th>Harga Jual Konsumen</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data akan diisi oleh JavaScript -->
-                            <tr>
-                                <td colspan="8" style="text-align: center;">Memuat data...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="pemasukan">
-                <div class="table-container">
-                    <table id="pemasukanTable">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Tanggal</th>
-                                <th>Toko</th>
-                                <th>Keterangan</th>
-                                <th>Nama Kitab</th>
-                                <th>Jumlah Kitab</th>
-                                <th>Harga Satuan</th>
-                                <th>Total Bayar</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data akan diisi oleh JavaScript -->
-                            <tr>
-                                <td colspan="9" style="text-align: center;">Memuat data...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        </div>
+        
+        <!-- Tab Pemasukan -->
+        <div class="tab-content" id="pemasukan">
+            <div class="table-container">
+                <table id="pemasukanTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>Toko</th>
+                            <th>Keterangan</th>
+                            <th>Nama Kitab</th>
+                            <th>Jumlah</th>
+                            <th>Harga Satuan</th>
+                            <th>Total Bayar</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="9" class="empty-state">
+                                <i class="fas fa-receipt"></i>
+                                <p>Data pemasukan sedang dimuat...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -537,7 +588,7 @@
     </div>
     
     <!-- Modal Input Pemasukan -->
-    <div class="modal" id="inputModal">
+    <div class="modal-overlay" id="inputModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class="fas fa-boxes"></i> Input Pemasukan Barang</h2>
@@ -552,7 +603,7 @@
                         </div>
                         <div class="form-group">
                             <label for="inputToko">Toko</label>
-                            <input type="text" id="inputToko" required placeholder="Nama toko">
+                            <input type="text" id="inputToko" required placeholder="Nama toko/supplier">
                         </div>
                     </div>
                     <div class="form-group">
@@ -566,67 +617,68 @@
                     </div>
                     
                     <div class="items-container" id="itemsContainer">
-                        <h3>Item Barang</h3>
-                        <div class="item-row">
-                            <div class="form-group">
-                                <label for="inputNamaKitab">Nama Kitab</label>
-                                <input type="text" id="inputNamaKitab" required placeholder="Nama kitab">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputJumlah">Jumlah</label>
-                                <input type="number" id="inputJumlah" required placeholder="Jumlah" min="1">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputTotalBayar">Total Bayar (Rp)</label>
-                                <input type="number" id="inputTotalBayar" required placeholder="Total bayar" min="0">
-                            </div>
-                            <button type="button" class="btn-remove-item" disabled>
-                                <i class="fas fa-trash"></i>
-                            </button>
+                        <div class="item-header">
+                            <h3><i class="fas fa-list"></i> Daftar Barang</h3>
                         </div>
+                        
+                        <!-- Item template akan diisi oleh JavaScript -->
                     </div>
                     
                     <button type="button" class="btn-add-item" id="addItemBtn">
-                        <i class="fas fa-plus"></i> Tambah Item
+                        <i class="fas fa-plus-circle"></i> Tambah Item Barang
                     </button>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelBtn">Keluar</button>
-                <button class="btn btn-primary" id="saveBtn">Simpan</button>
+                <button class="btn btn-secondary" id="cancelBtn">
+                    <i class="fas fa-times"></i> Keluar
+                </button>
+                <button class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-save"></i> Simpan Data
+                </button>
             </div>
         </div>
     </div>
     
     <!-- Modal Edit Harga -->
-    <div class="modal" id="editHargaModal">
+    <div class="modal-overlay" id="editHargaModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
-                <h2><i class="fas fa-edit"></i> Edit Harga</h2>
+                <h2><i class="fas fa-edit"></i> Edit Harga Jual</h2>
                 <button class="close-modal" id="closeEditModal">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="editHargaForm">
                     <div class="form-group">
-                        <label for="editHargaLembaga">Harga Jual Lembaga</label>
-                        <input type="number" id="editHargaLembaga" required min="0">
+                        <label for="editNamaBarang">Nama Barang</label>
+                        <input type="text" id="editNamaBarang" readonly>
                     </div>
-                    <div class="form-group">
-                        <label for="editHargaKonsumen">Harga Jual Konsumen</label>
-                        <input type="number" id="editHargaKonsumen" required min="0">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editHargaLembaga">Harga Lembaga</label>
+                            <input type="number" id="editHargaLembaga" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="editHargaKonsumen">Harga Konsumen</label>
+                            <input type="number" id="editHargaKonsumen" required min="0">
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelEditBtn">Batal</button>
-                <button class="btn btn-primary" id="saveEditBtn">Simpan</button>
+                <button class="btn btn-secondary" id="cancelEditBtn">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button class="btn btn-primary" id="saveEditBtn">
+                    <i class="fas fa-save"></i> Simpan Perubahan
+                </button>
             </div>
         </div>
     </div>
     
     <script>
-        // Firebase configuration (harus sama dengan sebelumnya)
-        const firebaseConfig = {
+        // Firebase Configuration (Ganti dengan config Anda)
+       const firebaseConfig = {
   apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
   authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
   projectId: "koperasi-mahida-24f7b",
@@ -642,9 +694,7 @@
         
         // DOM Elements
         const userName = document.getElementById('userName');
-        const userRole = document.getElementById('userRole');
         const userAvatar = document.getElementById('userAvatar');
-        const logoutBtn = document.getElementById('logoutBtn');
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
         const fabButton = document.getElementById('fabButton');
@@ -662,14 +712,14 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const saveEditBtn = document.getElementById('saveEditBtn');
         const editHargaForm = document.getElementById('editHargaForm');
+        const editNamaBarang = document.getElementById('editNamaBarang');
+        const editHargaLembaga = document.getElementById('editHargaLembaga');
+        const editHargaKonsumen = document.getElementById('editHargaKonsumen');
         
-        // Variabel global
+        // Global Variables
+        let currentUser = null;
         let currentEditingId = null;
-        let items = [{
-            namaKitab: '',
-            jumlah: 1,
-            totalBayar: 0
-        }];
+        let items = [];
         
         // Format Rupiah
         function formatRupiah(angka) {
@@ -682,230 +732,298 @@
         
         // Format Tanggal
         function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('id-ID', options);
         }
         
-        // Check auth state
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // User is signed in
-                userName.textContent = user.displayName || user.email.split('@')[0];
-                userAvatar.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName.textContent)}&background=6B5B00&color=fff`;
-                
-                // Check if user is admin
-                const isAdmin = user.email.includes('admin');
-                userRole.textContent = isAdmin ? 'Admin' : 'User';
-                
-                // Load data
-                loadGudangData();
-                loadPemasukanData();
-            } else {
-                // User is signed out
-                window.location.href = 'index.html';
-            }
-        });
+        // Format Keterangan
+        function formatKeterangan(keterangan) {
+            if (keterangan === 'Usmani') return '<span class="badge badge-usmani">Usmani</span>';
+            if (keterangan === 'Mahida') return '<span class="badge badge-mahida">Mahida</span>';
+            return '<span class="badge badge-nonusmani">Non Usmani</span>';
+        }
         
-        // Logout function
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            auth.signOut().then(() => {
-                window.location.href = 'index.html';
+        // Initialize App
+        function initApp() {
+            // Check auth state
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    userName.textContent = user.displayName || user.email.split('@')[0];
+                    userAvatar.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName.textContent)}&background=fff&color=6B5B00`;
+                    
+                    // Load data
+                    loadGudangData();
+                    loadPemasukanData();
+                } else {
+                    window.location.href = 'index.html';
+                }
             });
-        });
-        
-        // Tab switching
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
-                
-                // Show/hide FAB based on active tab
-                fabButton.style.display = tab.dataset.tab === 'pemasukan' ? 'flex' : 'none';
-            });
-        });
-        
-        // Modal handling
-        fabButton.addEventListener('click', () => {
-            // Set tanggal hari ini sebagai default
+            
+            // Set today's date as default
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('inputTanggal').value = today;
             
-            // Reset form
-            pemasukanForm.reset();
-            items = [{
-                namaKitab: '',
-                jumlah: 1,
-                totalBayar: 0
-            }];
+            // Initialize items array with one empty item
+            items = [createEmptyItem()];
             renderItems();
             
-            inputModal.style.display = 'flex';
-        });
+            // Setup event listeners
+            setupEventListeners();
+        }
         
-        closeModal.addEventListener('click', () => {
-            inputModal.style.display = 'none';
-        });
-        
-        cancelBtn.addEventListener('click', () => {
-            inputModal.style.display = 'none';
-        });
-        
-        closeEditModal.addEventListener('click', () => {
-            editHargaModal.style.display = 'none';
-        });
-        
-        cancelEditBtn.addEventListener('click', () => {
-            editHargaModal.style.display = 'none';
-        });
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === inputModal) {
-                inputModal.style.display = 'none';
-            }
-            if (e.target === editHargaModal) {
-                editHargaModal.style.display = 'none';
-            }
-        });
-        
-        // Add item button
-        addItemBtn.addEventListener('click', () => {
-            items.push({
+        // Create empty item object
+        function createEmptyItem() {
+            return {
                 namaKitab: '',
                 jumlah: 1,
-                totalBayar: 0
-            });
-            renderItems();
-        });
+                totalBayar: 0,
+                hargaSatuan: 0
+            };
+        }
         
         // Render items in form
         function renderItems() {
             itemsContainer.innerHTML = `
-                <h3>Item Barang</h3>
-                ${items.map((item, index) => `
-                    <div class="item-row" data-index="${index}">
-                        <div class="form-group">
-                            <label for="itemNamaKitab${index}">Nama Kitab</label>
-                            <input type="text" id="itemNamaKitab${index}" value="${item.namaKitab}" required placeholder="Nama kitab">
-                        </div>
-                        <div class="form-group">
-                            <label for="itemJumlah${index}">Jumlah</label>
-                            <input type="number" id="itemJumlah${index}" value="${item.jumlah}" required placeholder="Jumlah" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="itemTotalBayar${index}">Total Bayar (Rp)</label>
-                            <input type="number" id="itemTotalBayar${index}" value="${item.totalBayar}" required placeholder="Total bayar" min="0">
-                        </div>
-                        <button type="button" class="btn-remove-item" ${items.length === 1 ? 'disabled' : ''}>
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `).join('')}
+                <div class="item-header">
+                    <h3><i class="fas fa-list"></i> Daftar Barang</h3>
+                </div>
             `;
             
-            // Add event listeners to all remove buttons
-            document.querySelectorAll('.btn-remove-item').forEach((btn, index) => {
-                btn.addEventListener('click', () => {
-                    if (items.length > 1) {
-                        items.splice(index, 1);
-                        renderItems();
-                    }
-                });
-            });
-            
-            // Add event listeners to all inputs
             items.forEach((item, index) => {
-                const namaKitabInput = document.getElementById(`itemNamaKitab${index}`);
-                const jumlahInput = document.getElementById(`itemJumlah${index}`);
-                const totalBayarInput = document.getElementById(`itemTotalBayar${index}`);
+                const itemElement = document.createElement('div');
+                itemElement.className = 'item-row';
+                itemElement.dataset.index = index;
+                itemElement.innerHTML = `
+                    <button type="button" class="btn-remove-item" ${items.length === 1 ? 'disabled' : ''}>
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="form-group" style="flex: 2;">
+                        <label for="itemNamaKitab${index}">Nama Kitab</label>
+                        <input type="text" id="itemNamaKitab${index}" value="${item.namaKitab}" 
+                               required placeholder="Nama kitab" class="item-nama">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemJumlah${index}">Jumlah</label>
+                        <input type="number" id="itemJumlah${index}" value="${item.jumlah}" 
+                               required placeholder="Jumlah" min="1" class="item-jumlah">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemTotalBayar${index}">Total Bayar (Rp)</label>
+                        <input type="number" id="itemTotalBayar${index}" value="${item.totalBayar}" 
+                               required placeholder="Total bayar" min="0" class="item-total">
+                    </div>
+                    <div class="form-group">
+                        <label>Harga Satuan</label>
+                        <div style="padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                            ${formatRupiah(item.hargaSatuan)}
+                        </div>
+                    </div>
+                `;
+                itemsContainer.appendChild(itemElement);
                 
-                namaKitabInput.addEventListener('change', (e) => {
+                // Add event listeners
+                const namaInput = itemElement.querySelector('.item-nama');
+                const jumlahInput = itemElement.querySelector('.item-jumlah');
+                const totalInput = itemElement.querySelector('.item-total');
+                const removeBtn = itemElement.querySelector('.btn-remove-item');
+                
+                namaInput.addEventListener('change', (e) => {
                     items[index].namaKitab = e.target.value;
                 });
                 
                 jumlahInput.addEventListener('change', (e) => {
-                    items[index].jumlah = parseInt(e.target.value);
+                    items[index].jumlah = parseInt(e.target.value) || 0;
+                    calculateHargaSatuan(index);
                 });
                 
-                totalBayarInput.addEventListener('change', (e) => {
-                    items[index].totalBayar = parseInt(e.target.value);
+                totalInput.addEventListener('change', (e) => {
+                    items[index].totalBayar = parseInt(e.target.value) || 0;
+                    calculateHargaSatuan(index);
                 });
+                
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', () => {
+                        if (items.length > 1) {
+                            items.splice(index, 1);
+                            renderItems();
+                        }
+                    });
+                }
             });
         }
         
-        // Save pemasukan data
-        saveBtn.addEventListener('click', async () => {
-            const tanggal = document.getElementById('inputTanggal').value;
-            const toko = document.getElementById('inputToko').value;
-            const keterangan = document.getElementById('inputKeterangan').value;
+        // Calculate harga satuan
+        function calculateHargaSatuan(index) {
+            if (items[index].jumlah > 0 && items[index].totalBayar > 0) {
+                items[index].hargaSatuan = Math.round(items[index].totalBayar / items[index].jumlah);
+                renderItems(); // Refresh display
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                    
+                    // Show/hide FAB based on active tab
+                    fabButton.style.display = tab.dataset.tab === 'pemasukan' ? 'flex' : 'none';
+                });
+            });
             
-            // Validate items
-            let isValid = true;
-            items.forEach(item => {
-                if (!item.namaKitab || !item.jumlah || !item.totalBayar) {
-                    isValid = false;
+            // FAB Button
+            fabButton.addEventListener('click', () => {
+                // Reset form
+                pemasukanForm.reset();
+                items = [createEmptyItem()];
+                renderItems();
+                
+                // Set today's date
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('inputTanggal').value = today;
+                
+                // Show modal
+                inputModal.classList.add('active');
+            });
+            
+            // Modal controls
+            closeModal.addEventListener('click', () => {
+                inputModal.classList.remove('active');
+            });
+            
+            cancelBtn.addEventListener('click', () => {
+                inputModal.classList.remove('active');
+            });
+            
+            closeEditModal.addEventListener('click', () => {
+                editHargaModal.classList.remove('active');
+            });
+            
+            cancelEditBtn.addEventListener('click', () => {
+                editHargaModal.classList.remove('active');
+            });
+            
+            // Add item button
+            addItemBtn.addEventListener('click', () => {
+                items.push(createEmptyItem());
+                renderItems();
+            });
+            
+            // Save pemasukan data
+            saveBtn.addEventListener('click', async () => {
+                const tanggal = document.getElementById('inputTanggal').value;
+                const toko = document.getElementById('inputToko').value;
+                const keterangan = document.getElementById('inputKeterangan').value;
+                
+                // Validate form
+                if (!tanggal || !toko || !keterangan) {
+                    alert('Harap isi semua field utama');
+                    return;
+                }
+                
+                // Validate items
+                let isValid = true;
+                items.forEach(item => {
+                    if (!item.namaKitab || item.jumlah <= 0 || item.totalBayar <= 0) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('Harap isi semua item barang dengan benar');
+                    return;
+                }
+                
+                try {
+                    // Save each item to Firestore
+                    for (const item of items) {
+                        const hargaSatuan = Math.round(item.totalBayar / item.jumlah);
+                        
+                        // 1. Add to pemasukan collection
+                        await db.collection('pemasukan').add({
+                            tanggal,
+                            toko,
+                            keterangan,
+                            namaKitab: item.namaKitab,
+                            jumlah: item.jumlah,
+                            hargaSatuan,
+                            totalBayar: item.totalBayar,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            createdBy: currentUser.uid
+                        });
+                        
+                        // 2. Update gudang collection
+                        const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
+                        const snapshot = await gudangRef.get();
+                        
+                        if (snapshot.empty) {
+                            // Create new document in gudang
+                            await db.collection('gudang').add({
+                                namaBarang: item.namaKitab,
+                                keterangan,
+                                stok: item.jumlah,
+                                hargaBeli: hargaSatuan,
+                                hargaJualLembaga: 0,
+                                hargaJualKonsumen: 0,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        } else {
+                            // Update existing document
+                            snapshot.forEach(async doc => {
+                                await db.collection('gudang').doc(doc.id).update({
+                                    stok: firebase.firestore.FieldValue.increment(item.jumlah),
+                                    hargaBeli: hargaSatuan,
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            });
+                        }
+                    }
+                    
+                    alert('Data pemasukan berhasil disimpan!');
+                    inputModal.classList.remove('active');
+                    loadGudangData();
+                    loadPemasukanData();
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                    alert('Terjadi kesalahan saat menyimpan data');
                 }
             });
             
-            if (!isValid) {
-                alert('Harap isi semua field dengan benar');
-                return;
-            }
-            
-            try {
-                // Save each item to pemasukan collection
-                for (const item of items) {
-                    const hargaSatuan = Math.round(item.totalBayar / item.jumlah);
-                    
-                    // Add to pemasukan collection
-                    await db.collection('pemasukan').add({
-                        tanggal,
-                        toko,
-                        keterangan,
-                        namaKitab: item.namaKitab,
-                        jumlah: item.jumlah,
-                        hargaSatuan,
-                        totalBayar: item.totalBayar
-                    });
-                    
-                    // Update or add to gudang collection
-                    const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
-                    const snapshot = await gudangRef.get();
-                    
-                    if (snapshot.empty) {
-                        // Create new document in gudang
-                        await db.collection('gudang').add({
-                            namaBarang: item.namaKitab,
-                            keterangan,
-                            stok: item.jumlah,
-                            hargaBeli: hargaSatuan,
-                            hargaJualLembaga: 0,
-                            hargaJualKonsumen: 0
-                        });
-                    } else {
-                        // Update existing document
-                        snapshot.forEach(async doc => {
-                            await db.collection('gudang').doc(doc.id).update({
-                                stok: firebase.firestore.FieldValue.increment(item.jumlah),
-                                hargaBeli: hargaSatuan // Update harga beli terakhir
-                            });
-                        });
-                    }
+            // Save edited harga
+            saveEditBtn.addEventListener('click', async () => {
+                if (!currentEditingId) return;
+                
+                const hargaLembaga = parseInt(editHargaLembaga.value) || 0;
+                const hargaKonsumen = parseInt(editHargaKonsumen.value) || 0;
+                
+                if (hargaLembaga <= 0 || hargaKonsumen <= 0) {
+                    alert('Harga harus lebih dari 0');
+                    return;
                 }
                 
-                alert('Data pemasukan berhasil disimpan');
-                inputModal.style.display = 'none';
-                loadGudangData();
-                loadPemasukanData();
-            } catch (error) {
-                console.error('Error saving data: ', error);
-                alert('Terjadi kesalahan saat menyimpan data');
-            }
-        });
+                try {
+                    await db.collection('gudang').doc(currentEditingId).update({
+                        hargaJualLembaga: hargaLembaga,
+                        hargaJualKonsumen: hargaKonsumen,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert('Harga berhasil diperbarui!');
+                    editHargaModal.classList.remove('active');
+                    loadGudangData();
+                } catch (error) {
+                    console.error('Error updating harga:', error);
+                    alert('Gagal memperbarui harga');
+                }
+            });
+        }
         
         // Load gudang data
         async function loadGudangData() {
@@ -916,7 +1034,10 @@
                 if (snapshot.empty) {
                     gudangTable.innerHTML = `
                         <tr>
-                            <td colspan="8" style="text-align: center;">Tidak ada data gudang</td>
+                            <td colspan="8" class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <p>Belum ada data gudang</p>
+                            </td>
                         </tr>
                     `;
                     return;
@@ -930,31 +1051,35 @@
                     row.innerHTML = `
                         <td>${counter++}</td>
                         <td>${data.namaBarang}</td>
-                        <td>${data.keterangan || '-'}</td>
+                        <td>${formatKeterangan(data.keterangan)}</td>
                         <td>${data.stok}</td>
                         <td>${formatRupiah(data.hargaBeli || 0)}</td>
                         <td>${formatRupiah(data.hargaJualLembaga || 0)}</td>
                         <td>${formatRupiah(data.hargaJualKonsumen || 0)}</td>
                         <td class="action-buttons">
                             <button class="btn-action btn-edit" data-id="${doc.id}">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-edit"></i> Edit
                             </button>
                         </td>
                     `;
-                });
-                
-                // Add event listeners to edit buttons
-                document.querySelectorAll('.btn-edit').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.currentTarget.dataset.id;
-                        editHarga(id);
+                    
+                    // Add event listener to edit button
+                    row.querySelector('.btn-edit').addEventListener('click', () => {
+                        currentEditingId = doc.id;
+                        editNamaBarang.value = data.namaBarang;
+                        editHargaLembaga.value = data.hargaJualLembaga || 0;
+                        editHargaKonsumen.value = data.hargaJualKonsumen || 0;
+                        editHargaModal.classList.add('active');
                     });
                 });
             } catch (error) {
-                console.error('Error loading gudang data: ', error);
+                console.error('Error loading gudang data:', error);
                 gudangTable.innerHTML = `
                     <tr>
-                        <td colspan="8" style="text-align: center;">Gagal memuat data gudang</td>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Gagal memuat data gudang</p>
+                        </td>
                     </tr>
                 `;
             }
@@ -963,18 +1088,27 @@
         // Load pemasukan data
         async function loadPemasukanData() {
             try {
-                const snapshot = await db.collection('pemasukan').orderBy('tanggal', 'desc').get();
+                const snapshot = await db.collection('pemasukan')
+                    .orderBy('tanggal', 'desc')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
                 pemasukanTable.innerHTML = '';
                 
                 if (snapshot.empty) {
                     pemasukanTable.innerHTML = `
                         <tr>
-                            <td colspan="9" style="text-align: center;">Tidak ada data pemasukan</td>
+                            <td colspan="9" class="empty-state">
+                                <i class="fas fa-receipt"></i>
+                                <p>Belum ada data pemasukan</p>
+                            </td>
                         </tr>
                     `;
                     return;
                 }
                 
+                let counter = 1;
+                snapshot.forEach(doc
                 let counter = 1;
                 snapshot.forEach(doc => {
                     const data = doc.data();

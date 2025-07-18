@@ -4,535 +4,628 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemasukan - Koperasi Mahida</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Import Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        * {
+        :root {
+            --primary-color: #FFD700;
+            --secondary-color: #D4AF37;
+            --dark-color: #6B5B00;
+            --light-color: #FFF8DC;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --gold: #D4AF37;
-            --dark-gold: #B8860B;
-            --light-gold: #FFD700;
-            --cream: #FFF8E1;
-            --dark: #2C2416;
-            --light: #FFFFFF;
-            --shadow: rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-            color: var(--dark);
-            min-height: 100vh;
-            position: relative;
+            background-color: var(--light-color);
+            color: #333;
             overflow-x: hidden;
         }
-
-        /* Header & Navigation */
-        header {
-            background: linear-gradient(to right, var(--dark), var(--dark-gold));
-            padding: 1rem 5%;
-            box-shadow: 0 4px 12px var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-bottom: 4px solid var(--dark-color);
+        }
+        
         .logo {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-
-        .logo-icon {
-            font-size: 2.5rem;
-            color: var(--light-gold);
+        
+        .logo img {
+            height: 50px;
         }
-
-        .logo-text {
+        
+        .logo-text h1 {
+            margin: 0;
             font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--light);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
-
-        nav ul {
+        
+        .logo-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        nav {
             display: flex;
-            list-style: none;
-            gap: 30px;
+            justify-content: space-between;
+            align-items: center;
         }
-
-        nav a {
-            color: var(--cream);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1rem;
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
             padding: 8px 15px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        nav a:hover, nav a.active {
-            background-color: var(--gold);
-            color: var(--dark);
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 2rem;
+            border-radius: 50px;
+            cursor: pointer;
             position: relative;
         }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            color: var(--dark);
-            display: inline-block;
-            padding: 0 20px;
-            background: var(--cream);
-            position: relative;
-            z-index: 1;
+        
+        .user-profile:hover {
+            background-color: rgba(255, 255, 255, 0.3);
         }
-
-        .section-title::after {
-            content: '';
+        
+        .user-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .user-profile .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-profile .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-profile .role {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+        
+        .user-dropdown {
             position: absolute;
-            top: 50%;
-            left: 0;
+            top: 100%;
             right: 0;
-            height: 3px;
-            background: linear-gradient(to right, transparent, var(--gold), transparent);
-            z-index: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            padding: 10px 0;
+            display: none;
+            z-index: 100;
         }
-
-        /* Table Styles */
+        
+        .user-profile:hover .user-dropdown {
+            display: block;
+        }
+        
+        .user-dropdown a {
+            display: block;
+            padding: 8px 15px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        
+        .user-dropdown a:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .user-dropdown a i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--dark-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         .table-container {
-            background: var(--light);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px var(--shadow);
             overflow-x: auto;
-            margin-bottom: 4rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
         }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
         }
-
+        
         th, td {
-            padding: 15px 20px;
+            padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
-
-        thead {
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: var(--light);
-        }
-
+        
         th {
+            background-color: #FFF9E6;
+            color: var(--dark-color);
             font-weight: 600;
         }
-
-        tbody tr {
-            transition: background 0.3s;
+        
+        tr:hover {
+            background-color: #f9f9f9;
         }
-
-        tbody tr:hover {
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        .actions {
+        
+        .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 5px;
         }
-
-        .btn-edit, .btn-delete {
-            padding: 6px 12px;
-            border-radius: 4px;
+        
+        .btn-action {
+            padding: 5px 10px;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background-color 0.2s;
         }
-
+        
         .btn-edit {
-            background: var(--gold);
-            color: var(--dark);
+            background-color: var(--primary-color);
+            color: var(--dark-color);
         }
-
+        
         .btn-delete {
-            background: #e74c3c;
+            background-color: #ff6b6b;
             color: white;
         }
-
-        .btn-edit:hover, .btn-delete:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
+        
+        .btn-action:hover {
+            opacity: 0.8;
         }
-
-        /* Floating Action Button */
+        
         .fab-container {
             position: fixed;
             bottom: 30px;
             right: 30px;
             z-index: 100;
         }
-
+        
         .fab {
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
-
+        
         .fab:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
-
-        /* Modal */
-        .modal-overlay {
+        
+        .fab i {
+            font-size: 24px;
+        }
+        
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
         }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
+        
         .modal-content {
-            background: white;
-            border-radius: 12px;
+            background-color: white;
+            border-radius: 10px;
             width: 90%;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            transform: translateY(20px);
-            transition: transform 0.3s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-
+        
         .modal-header {
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
             padding: 20px;
+            border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
         }
-
-        .modal-header h3 {
-            font-size: 1.5rem;
+        
+        .modal-header h2 {
+            margin: 0;
+            color: var(--dark-color);
         }
-
+        
         .close-modal {
             background: none;
             border: none;
-            color: white;
             font-size: 1.5rem;
             cursor: pointer;
+            color: #777;
         }
-
+        
         .modal-body {
-            padding: 25px;
+            padding: 20px;
         }
-
-        .input-group {
+        
+        .form-group {
             margin-bottom: 20px;
         }
-
-        .input-group label {
+        
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
+            font-weight: 600;
+            color: #555;
         }
-
-        .input-group input, .input-group select {
+        
+        .form-group input, .form-group select {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 1rem;
-            transition: border-color 0.3s;
         }
-
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--gold);
-            outline: none;
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
         }
-
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .items-container {
+            margin-top: 20px;
+        }
+        
         .item-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
+            display: flex;
             gap: 15px;
             margin-bottom: 15px;
-            align-items: end;
+            align-items: flex-end;
         }
-
-        .add-item-btn {
-            background: var(--dark-gold);
+        
+        .item-row .form-group {
+            margin-bottom: 0;
+        }
+        
+        .btn-add-item {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .btn-remove-item {
+            background-color: #ff6b6b;
             color: white;
             border: none;
-            padding: 8px 15px;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
-
-        .add-item-btn:hover {
-            background: var(--dark);
-        }
-
-        .remove-item-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 8px;
-            cursor: pointer;
-        }
-
-        .modal-footer {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid #eee;
-        }
-
-        .btn-save, .btn-cancel {
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             border: none;
         }
-
-        .btn-save {
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
         }
-
-        .btn-cancel {
-            background: #e0e0e0;
-            color: var(--dark);
+        
+        .btn-primary:hover, .btn-secondary:hover {
+            opacity: 0.8;
         }
-
-        .btn-save:hover, .btn-cancel:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-        }
-
-        /* Back button */
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background-color: var(--dark-color);
             color: white;
             text-decoration: none;
             border-radius: 5px;
             margin-bottom: 20px;
-            transition: all 0.3s;
         }
-
-        .back-button:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
+        
+        .btn-back:hover {
+            background-color: #5a4d00;
         }
-
-        /* Responsive */
+        
         @media (max-width: 768px) {
-            header {
+            .form-row, .item-row {
                 flex-direction: column;
-                padding: 1rem;
-            }
-            
-            .logo {
-                margin-bottom: 1rem;
-            }
-            
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
                 gap: 10px;
             }
             
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            
-            .item-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-body {
-                padding: 15px;
+            .modal-content {
+                width: 95%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header & Navigation -->
     <header>
-        <div class="logo">
-            <i class="fas fa-book logo-icon"></i>
-            <div class="logo-text">Koperasi Mahida</div>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-book-open" style="font-size: 2.5rem; color: white;"></i>
+                    <div class="logo-text">
+                        <h1>Koperasi Mahida</h1>
+                        <p>Sistem Akuntansi Toko Kitab</p>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6B5B00&color=fff" alt="User" id="userAvatar">
+                    <div class="user-info">
+                        <span class="name" id="userName">Loading...</span>
+                        <span class="role" id="userRole">Admin</span>
+                    </div>
+                    <div class="user-dropdown">
+                        <a href="#"><i class="fas fa-user-cog"></i> Profil</a>
+                        <a href="#"><i class="fas fa-cog"></i> Pengaturan</a>
+                        <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </nav>
         </div>
-        <nav>
-            <ul>
-                <li><a href="beranda.html">Menu</a></li>
-                <li><a href="pemasukan.html" class="active">Pemasukan</a></li>
-                <li><a href="penjualan.html">Penjualan</a></li>
-                <li><a href="laporan.html">Laporan</a></li>
-                <li><a href="#" id="logoutBtn">Keluar</a></li>
-            </ul>
-        </nav>
     </header>
-
-    <!-- Main Content -->
+    
     <div class="container">
-        <a href="beranda.html" class="back-button">
-            <i class="fas fa-arrow-left"></i> Kembali ke Menu
+        <a href="beranda.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Kembali ke Beranda
         </a>
         
-        <div class="section-title">
-            <h2>Data Pemasukan</h2>
-        </div>
-        
-        <div class="table-container">
-            <table id="incomeTable">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Toko</th>
-                        <th>Keterangan</th>
-                        <th>Nama Kitab</th>
-                        <th>Jumlah Kitab</th>
-                        <th>Harga Satuan</th>
-                        <th>Total Bayar</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="incomeTableBody">
-                    <!-- Data akan diisi oleh JavaScript -->
-                </tbody>
-            </table>
+        <div class="main-content">
+            <div class="tabs">
+                <div class="tab active" data-tab="gudang">Gudang</div>
+                <div class="tab" data-tab="pemasukan">Pemasukan Barang</div>
+            </div>
+            
+            <div class="tab-content active" id="gudang">
+                <div class="table-container">
+                    <table id="gudangTable">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Barang</th>
+                                <th>Keterangan</th>
+                                <th>Stok</th>
+                                <th>Harga Beli</th>
+                                <th>Harga Jual Lembaga</th>
+                                <th>Harga Jual Konsumen</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data akan diisi oleh JavaScript -->
+                            <tr>
+                                <td colspan="8" style="text-align: center;">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="pemasukan">
+                <div class="table-container">
+                    <table id="pemasukanTable">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Toko</th>
+                                <th>Keterangan</th>
+                                <th>Nama Kitab</th>
+                                <th>Jumlah Kitab</th>
+                                <th>Harga Satuan</th>
+                                <th>Total Bayar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data akan diisi oleh JavaScript -->
+                            <tr>
+                                <td colspan="9" style="text-align: center;">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Floating Action Button -->
+    
+    <!-- FAB Button -->
     <div class="fab-container">
-        <div class="fab" id="addIncomeBtn">
+        <div class="fab" id="fabButton">
             <i class="fas fa-plus"></i>
         </div>
     </div>
-
-    <!-- Modal Form -->
-    <div class="modal-overlay" id="incomeModal">
+    
+    <!-- Modal Input Pemasukan -->
+    <div class="modal" id="inputModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Tambah Data Pemasukan</h3>
+                <h2><i class="fas fa-boxes"></i> Input Pemasukan Barang</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="input-group">
-                    <label for="tanggal">Tanggal</label>
-                    <input type="date" id="tanggal" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="toko">Toko</label>
-                    <input type="text" id="toko" placeholder="Nama toko" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="keterangan">Keterangan</label>
-                    <select id="keterangan" required>
-                        <option value="">Pilih keterangan</option>
-                        <option value="Usmani">Usmani</option>
-                        <option value="Mahida">Mahida</option>
-                        <option value="Non Usmani">Non Usmani</option>
-                    </select>
-                </div>
-                
-                <h4>Item Pembelian</h4>
-                <div id="itemsContainer">
-                    <div class="item-row">
-                        <div>
-                            <label>Nama Kitab</label>
-                            <input type="text" class="nama-kitab" placeholder="Nama kitab" required>
+                <form id="pemasukanForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="inputTanggal">Tanggal</label>
+                            <input type="date" id="inputTanggal" required>
                         </div>
-                        <div>
-                            <label>Jumlah Kitab</label>
-                            <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
-                        </div>
-                        <div>
-                            <label>Total Bayar (Rp)</label>
-                            <input type="number" class="total" min="1" placeholder="Total" required>
+                        <div class="form-group">
+                            <label for="inputToko">Toko</label>
+                            <input type="text" id="inputToko" required placeholder="Nama toko">
                         </div>
                     </div>
-                </div>
-                
-                <button class="add-item-btn" id="addItemBtn">
-                    <i class="fas fa-plus"></i> Tambah Item
-                </button>
+                    <div class="form-group">
+                        <label for="inputKeterangan">Keterangan</label>
+                        <select id="inputKeterangan" required>
+                            <option value="">Pilih Keterangan</option>
+                            <option value="Usmani">Usmani</option>
+                            <option value="Mahida">Mahida</option>
+                            <option value="Non Usmani">Non Usmani</option>
+                        </select>
+                    </div>
+                    
+                    <div class="items-container" id="itemsContainer">
+                        <h3>Item Barang</h3>
+                        <div class="item-row">
+                            <div class="form-group">
+                                <label for="inputNamaKitab">Nama Kitab</label>
+                                <input type="text" id="inputNamaKitab" required placeholder="Nama kitab">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputJumlah">Jumlah</label>
+                                <input type="number" id="inputJumlah" required placeholder="Jumlah" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputTotalBayar">Total Bayar (Rp)</label>
+                                <input type="number" id="inputTotalBayar" required placeholder="Total bayar" min="0">
+                            </div>
+                            <button type="button" class="btn-remove-item" disabled>
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn-add-item" id="addItemBtn">
+                        <i class="fas fa-plus"></i> Tambah Item
+                    </button>
+                </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" id="cancelBtn">Batal</button>
-                <button class="btn-save" id="saveBtn">Simpan Data</button>
+                <button class="btn btn-secondary" id="cancelBtn">Keluar</button>
+                <button class="btn btn-primary" id="saveBtn">Simpan</button>
             </div>
         </div>
     </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-
+    
+    <!-- Modal Edit Harga -->
+    <div class="modal" id="editHargaModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Harga</h2>
+                <button class="close-modal" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editHargaForm">
+                    <div class="form-group">
+                        <label for="editHargaLembaga">Harga Jual Lembaga</label>
+                        <input type="number" id="editHargaLembaga" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="editHargaKonsumen">Harga Jual Konsumen</label>
+                        <input type="number" id="editHargaKonsumen" required min="0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEditBtn">Batal</button>
+                <button class="btn btn-primary" id="saveEditBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        // Konfigurasi Firebase
+        // Firebase configuration (harus sama dengan sebelumnya)
         const firebaseConfig = {
   apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
   authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
@@ -541,237 +634,432 @@
   messagingSenderId: "399595189627",
   appId: "1:399595189627:web:eaedd97ba36718206bb9de"
 };
-
-        // Inisialisasi Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-
-        // Referensi ke koleksi pemasukan
-        const pemasukanRef = db.collection("pemasukan");
-
-        // Elemen DOM
-        const addIncomeBtn = document.getElementById('addIncomeBtn');
-        const incomeModal = document.getElementById('incomeModal');
+        
+        // DOM Elements
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const userAvatar = document.getElementById('userAvatar');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const fabButton = document.getElementById('fabButton');
+        const inputModal = document.getElementById('inputModal');
         const closeModal = document.getElementById('closeModal');
         const cancelBtn = document.getElementById('cancelBtn');
         const saveBtn = document.getElementById('saveBtn');
-        const addItemBtn = document.getElementById('addItemBtn');
+        const pemasukanForm = document.getElementById('pemasukanForm');
         const itemsContainer = document.getElementById('itemsContainer');
-        const incomeTableBody = document.getElementById('incomeTableBody');
-        const logoutBtn = document.getElementById('logoutBtn');
-
-        // Set tanggal default ke hari ini
-        document.getElementById('tanggal').valueAsDate = new Date();
-
-        // Buka modal
-        addIncomeBtn.addEventListener('click', () => {
-            incomeModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-
-        // Tutup modal
-        function closeModalFunc() {
-            incomeModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            resetForm();
+        const addItemBtn = document.getElementById('addItemBtn');
+        const gudangTable = document.getElementById('gudangTable').getElementsByTagName('tbody')[0];
+        const pemasukanTable = document.getElementById('pemasukanTable').getElementsByTagName('tbody')[0];
+        const editHargaModal = document.getElementById('editHargaModal');
+        const closeEditModal = document.getElementById('closeEditModal');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const editHargaForm = document.getElementById('editHargaForm');
+        
+        // Variabel global
+        let currentEditingId = null;
+        let items = [{
+            namaKitab: '',
+            jumlah: 1,
+            totalBayar: 0
+        }];
+        
+        // Format Rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
         }
-
-        closeModal.addEventListener('click', closeModalFunc);
-        cancelBtn.addEventListener('click', closeModalFunc);
-
-        // Tambah item baru
+        
+        // Format Tanggal
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+        
+        // Check auth state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                userName.textContent = user.displayName || user.email.split('@')[0];
+                userAvatar.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName.textContent)}&background=6B5B00&color=fff`;
+                
+                // Check if user is admin
+                const isAdmin = user.email.includes('admin');
+                userRole.textContent = isAdmin ? 'Admin' : 'User';
+                
+                // Load data
+                loadGudangData();
+                loadPemasukanData();
+            } else {
+                // User is signed out
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // Logout function
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+        
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+                
+                // Show/hide FAB based on active tab
+                fabButton.style.display = tab.dataset.tab === 'pemasukan' ? 'flex' : 'none';
+            });
+        });
+        
+        // Modal handling
+        fabButton.addEventListener('click', () => {
+            // Set tanggal hari ini sebagai default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputTanggal').value = today;
+            
+            // Reset form
+            pemasukanForm.reset();
+            items = [{
+                namaKitab: '',
+                jumlah: 1,
+                totalBayar: 0
+            }];
+            renderItems();
+            
+            inputModal.style.display = 'flex';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            inputModal.style.display = 'none';
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            inputModal.style.display = 'none';
+        });
+        
+        closeEditModal.addEventListener('click', () => {
+            editHargaModal.style.display = 'none';
+        });
+        
+        cancelEditBtn.addEventListener('click', () => {
+            editHargaModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === inputModal) {
+                inputModal.style.display = 'none';
+            }
+            if (e.target === editHargaModal) {
+                editHargaModal.style.display = 'none';
+            }
+        });
+        
+        // Add item button
         addItemBtn.addEventListener('click', () => {
-            const itemRow = document.createElement('div');
-            itemRow.className = 'item-row';
-            itemRow.innerHTML = `
-                <div>
-                    <input type="text" class="nama-kitab" placeholder="Nama kitab" required>
-                </div>
-                <div>
-                    <input type="number" class="jumlah" min="1" placeholder="Jumlah" required>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <input type="number" class="total" min="1" placeholder="Total" required>
+            items.push({
+                namaKitab: '',
+                jumlah: 1,
+                totalBayar: 0
+            });
+            renderItems();
+        });
+        
+        // Render items in form
+        function renderItems() {
+            itemsContainer.innerHTML = `
+                <h3>Item Barang</h3>
+                ${items.map((item, index) => `
+                    <div class="item-row" data-index="${index}">
+                        <div class="form-group">
+                            <label for="itemNamaKitab${index}">Nama Kitab</label>
+                            <input type="text" id="itemNamaKitab${index}" value="${item.namaKitab}" required placeholder="Nama kitab">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemJumlah${index}">Jumlah</label>
+                            <input type="number" id="itemJumlah${index}" value="${item.jumlah}" required placeholder="Jumlah" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemTotalBayar${index}">Total Bayar (Rp)</label>
+                            <input type="number" id="itemTotalBayar${index}" value="${item.totalBayar}" required placeholder="Total bayar" min="0">
+                        </div>
+                        <button type="button" class="btn-remove-item" ${items.length === 1 ? 'disabled' : ''}>
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
-                    <button class="remove-item-btn" type="button">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+                `).join('')}
             `;
             
-            // Tambahkan fungsi untuk menghapus item
-            const removeBtn = itemRow.querySelector('.remove-item-btn');
-            removeBtn.addEventListener('click', () => {
-                itemRow.remove();
-            });
-            
-            itemsContainer.appendChild(itemRow);
-        });
-
-        // Reset form
-        function resetForm() {
-            document.getElementById('toko').value = '';
-            document.getElementById('keterangan').value = '';
-            
-            // Hapus semua item kecuali yang pertama
-            const items = document.querySelectorAll('.item-row');
-            items.forEach((item, index) => {
-                if (index > 0) item.remove();
-            });
-            
-            // Reset item pertama
-            const firstItem = document.querySelector('.item-row');
-            firstItem.querySelector('.nama-kitab').value = '';
-            firstItem.querySelector('.jumlah').value = '';
-            firstItem.querySelector('.total').value = '';
-        }
-
-        // Simpan data ke Firebase
-        saveBtn.addEventListener('click', async () => {
-            const tanggal = document.getElementById('tanggal').value;
-            const toko = document.getElementById('toko').value;
-            const keterangan = document.getElementById('keterangan').value;
-            
-            // Validasi input
-            if (!tanggal || !toko || !keterangan) {
-                alert('Harap isi semua field utama!');
-                return;
-            }
-            
-            // Kumpulkan item
-            const items = [];
-            let isValid = true;
-            
-            document.querySelectorAll('.item-row').forEach(row => {
-                const namaKitab = row.querySelector('.nama-kitab').value;
-                const jumlah = parseInt(row.querySelector('.jumlah').value);
-                const total = parseInt(row.querySelector('.total').value);
-                
-                // Validasi item
-                if (!namaKitab || !jumlah || !total) {
-                    isValid = false;
-                    return;
-                }
-                
-                // Hitung harga satuan
-                const hargaSatuan = total / jumlah;
-                
-                items.push({
-                    namaKitab,
-                    jumlah,
-                    total,
-                    hargaSatuan
+            // Add event listeners to all remove buttons
+            document.querySelectorAll('.btn-remove-item').forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    if (items.length > 1) {
+                        items.splice(index, 1);
+                        renderItems();
+                    }
                 });
+            });
+            
+            // Add event listeners to all inputs
+            items.forEach((item, index) => {
+                const namaKitabInput = document.getElementById(`itemNamaKitab${index}`);
+                const jumlahInput = document.getElementById(`itemJumlah${index}`);
+                const totalBayarInput = document.getElementById(`itemTotalBayar${index}`);
+                
+                namaKitabInput.addEventListener('change', (e) => {
+                    items[index].namaKitab = e.target.value;
+                });
+                
+                jumlahInput.addEventListener('change', (e) => {
+                    items[index].jumlah = parseInt(e.target.value);
+                });
+                
+                totalBayarInput.addEventListener('change', (e) => {
+                    items[index].totalBayar = parseInt(e.target.value);
+                });
+            });
+        }
+        
+        // Save pemasukan data
+        saveBtn.addEventListener('click', async () => {
+            const tanggal = document.getElementById('inputTanggal').value;
+            const toko = document.getElementById('inputToko').value;
+            const keterangan = document.getElementById('inputKeterangan').value;
+            
+            // Validate items
+            let isValid = true;
+            items.forEach(item => {
+                if (!item.namaKitab || !item.jumlah || !item.totalBayar) {
+                    isValid = false;
+                }
             });
             
             if (!isValid) {
-                alert('Harap isi semua field item dengan benar!');
+                alert('Harap isi semua field dengan benar');
                 return;
             }
             
             try {
-                // Simpan ke Firestore
-                await pemasukanRef.add({
-                    tanggal: new Date(tanggal),
-                    toko,
-                    keterangan,
-                    items,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                // Save each item to pemasukan collection
+                for (const item of items) {
+                    const hargaSatuan = Math.round(item.totalBayar / item.jumlah);
+                    
+                    // Add to pemasukan collection
+                    await db.collection('pemasukan').add({
+                        tanggal,
+                        toko,
+                        keterangan,
+                        namaKitab: item.namaKitab,
+                        jumlah: item.jumlah,
+                        hargaSatuan,
+                        totalBayar: item.totalBayar
+                    });
+                    
+                    // Update or add to gudang collection
+                    const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
+                    const snapshot = await gudangRef.get();
+                    
+                    if (snapshot.empty) {
+                        // Create new document in gudang
+                        await db.collection('gudang').add({
+                            namaBarang: item.namaKitab,
+                            keterangan,
+                            stok: item.jumlah,
+                            hargaBeli: hargaSatuan,
+                            hargaJualLembaga: 0,
+                            hargaJualKonsumen: 0
+                        });
+                    } else {
+                        // Update existing document
+                        snapshot.forEach(async doc => {
+                            await db.collection('gudang').doc(doc.id).update({
+                                stok: firebase.firestore.FieldValue.increment(item.jumlah),
+                                hargaBeli: hargaSatuan // Update harga beli terakhir
+                            });
+                        });
+                    }
+                }
                 
-                alert('Data pemasukan berhasil disimpan!');
-                closeModalFunc();
+                alert('Data pemasukan berhasil disimpan');
+                inputModal.style.display = 'none';
+                loadGudangData();
                 loadPemasukanData();
             } catch (error) {
                 console.error('Error saving data: ', error);
-                alert('Terjadi kesalahan saat menyimpan data: ' + error.message);
+                alert('Terjadi kesalahan saat menyimpan data');
             }
         });
-
-        // Muat data pemasukan dari Firestore
-        async function loadPemasukanData() {
+        
+        // Load gudang data
+        async function loadGudangData() {
             try {
-                const snapshot = await pemasukanRef.orderBy('createdAt', 'desc').get();
-                incomeTableBody.innerHTML = '';
+                const snapshot = await db.collection('gudang').orderBy('namaBarang').get();
+                gudangTable.innerHTML = '';
                 
                 if (snapshot.empty) {
-                    incomeTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Belum ada data pemasukan</td></tr>';
+                    gudangTable.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center;">Tidak ada data gudang</td>
+                        </tr>
+                    `;
                     return;
                 }
                 
-                let nomor = 1;
+                let counter = 1;
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    const tanggal = data.tanggal.toDate().toLocaleDateString('id-ID');
+                    const row = gudangTable.insertRow();
                     
-                    // Loop melalui setiap item
-                    data.items.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${nomor}</td>
-                            <td>${tanggal}</td>
-                            <td>${data.toko}</td>
-                            <td>${data.keterangan}</td>
-                            <td>${item.namaKitab}</td>
-                            <td>${item.jumlah}</td>
-                            <td>Rp ${item.hargaSatuan.toLocaleString('id-ID')}</td>
-                            <td>Rp ${item.total.toLocaleString('id-ID')}</td>
-                            <td class="actions">
-                                <button class="btn-edit"><i class="fas fa-edit"></i></button>
-                                <button class="btn-delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
-                            </td>
-                        `;
-                        incomeTableBody.appendChild(row);
-                        nomor++;
-                    });
+                    row.innerHTML = `
+                        <td>${counter++}</td>
+                        <td>${data.namaBarang}</td>
+                        <td>${data.keterangan || '-'}</td>
+                        <td>${data.stok}</td>
+                        <td>${formatRupiah(data.hargaBeli || 0)}</td>
+                        <td>${formatRupiah(data.hargaJualLembaga || 0)}</td>
+                        <td>${formatRupiah(data.hargaJualKonsumen || 0)}</td>
+                        <td class="action-buttons">
+                            <button class="btn-action btn-edit" data-id="${doc.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    `;
                 });
                 
-                // Tambahkan event listener untuk tombol hapus
+                // Add event listeners to edit buttons
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        editHarga(id);
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading gudang data: ', error);
+                gudangTable.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center;">Gagal memuat data gudang</td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // Load pemasukan data
+        async function loadPemasukanData() {
+            try {
+                const snapshot = await db.collection('pemasukan').orderBy('tanggal', 'desc').get();
+                pemasukanTable.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    pemasukanTable.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center;">Tidak ada data pemasukan</td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                let counter = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = pemasukanTable.insertRow();
+                    
+                    row.innerHTML = `
+                        <td>${counter++}</td>
+                        <td>${formatDate(data.tanggal)}</td>
+                        <td>${data.toko}</td>
+                        <td>${data.keterangan}</td>
+                        <td>${data.namaKitab}</td>
+                        <td>${data.jumlah}</td>
+                        <td>${formatRupiah(data.hargaSatuan || 0)}</td>
+                        <td>${formatRupiah(data.totalBayar || 0)}</td>
+                        <td class="action-buttons">
+                            <button class="btn-action btn-delete" data-id="${doc.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                });
+                
+                // Add event listeners to delete buttons
                 document.querySelectorAll('.btn-delete').forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        const id = btn.getAttribute('data-id');
+                    btn.addEventListener('click', async (e) => {
                         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                            const id = e.currentTarget.dataset.id;
                             try {
-                                await pemasukanRef.doc(id).delete();
+                                await db.collection('pemasukan').doc(id).delete();
                                 loadPemasukanData();
+                                alert('Data berhasil dihapus');
                             } catch (error) {
                                 console.error('Error deleting document: ', error);
-                                alert('Terjadi kesalahan saat menghapus data');
+                                alert('Gagal menghapus data');
                             }
                         }
                     });
                 });
-                
             } catch (error) {
-                console.error('Error loading data: ', error);
-                incomeTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: red;">Gagal memuat data</td></tr>';
+                console.error('Error loading pemasukan data: ', error);
+                pemasukanTable.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center;">Gagal memuat data pemasukan</td>
+                    </tr>
+                `;
             }
         }
-
-        // Logout
-        logoutBtn.addEventListener('click', () => {
-            if (confirm('Apakah Anda yakin ingin keluar?')) {
-                auth.signOut().then(() => {
-                    window.location.href = 'dashboard.html';
-                }).catch(error => {
-                    console.error('Logout error: ', error);
-                    alert('Terjadi kesalahan saat logout');
-                });
-            }
-        });
-
-        // Muat data saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            // Cek status login
-            auth.onAuthStateChanged(user => {
-                if (!user) {
-                    window.location.href = 'index.html';
-                } else {
-                    loadPemasukanData();
+        
+        // Edit harga function
+        async function editHarga(id) {
+            try {
+                const doc = await db.collection('gudang').doc(id).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('editHargaLembaga').value = data.hargaJualLembaga || 0;
+                    document.getElementById('editHargaKonsumen').value = data.hargaJualKonsumen || 0;
+                    currentEditingId = id;
+                    editHargaModal.style.display = 'flex';
                 }
-            });
+            } catch (error) {
+                console.error('Error getting document: ', error);
+                alert('Gagal memuat data harga');
+            }
+        }
+        
+        // Save edited harga
+        saveEditBtn.addEventListener('click', async () => {
+            if (!currentEditingId) return;
+            
+            const hargaLembaga = parseInt(document.getElementById('editHargaLembaga').value);
+            const hargaKonsumen = parseInt(document.getElementById('editHargaKonsumen').value);
+            
+            try {
+                await db.collection('gudang').doc(currentEditingId).update({
+                    hargaJualLembaga: hargaLembaga,
+                    hargaJualKonsumen: hargaKonsumen
+                });
+                
+                alert('Harga berhasil diperbarui');
+                editHargaModal.style.display = 'none';
+                loadGudangData();
+            } catch (error) {
+                console.error('Error updating document: ', error);
+                alert('Gagal memperbarui harga');
+            }
         });
     </script>
 </body>

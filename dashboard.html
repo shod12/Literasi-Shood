@@ -4,396 +4,362 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Koperasi Mahida - Toko Kitab</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
+        :root {
+            --primary-color: #FFD700;
+            --secondary-color: #D4AF37;
+            --dark-color: #6B5B00;
+            --light-color: #FFF8DC;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: #333;
         }
-
-        :root {
-            --gold: #D4AF37;
-            --dark-gold: #B8860B;
-            --light-gold: #FFD700;
-            --cream: #FFF8E1;
-            --dark: #2C2416;
-            --light: #FFFFFF;
-            --shadow: rgba(0, 0, 0, 0.1);
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-
-        body {
-            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-            color: var(--dark);
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* Header */
+        
         header {
-            background: linear-gradient(to right, var(--dark), var(--dark-gold));
-            padding: 1.5rem 5%;
-            box-shadow: 0 4px 12px var(--shadow);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
         }
-
-        .logo-icon {
+        
+        .logo i {
             font-size: 2.5rem;
-            color: var(--light-gold);
+            margin-right: 15px;
         }
-
-        .logo-text {
+        
+        .logo-text h1 {
+            margin: 0;
             font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--light);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
-        /* Hero Section */
-        .hero {
-            padding: 5rem 5% 3rem;
-            background: url('https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
-            position: relative;
-            text-align: center;
-            color: var(--light);
-            min-height: 70vh;
+        
+        .logo-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        nav ul {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            list-style: none;
         }
-
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        
+        nav ul li a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .hero {
+            background: url('https://images.unsplash.com/photo-1600189261867-30e5ffe7b8da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+            background-size: cover;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
         .hero::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
         }
-
+        
         .hero-content {
             position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 15px;
-            border: 2px solid var(--light-gold);
+            z-index: 1;
+            color: white;
+            max-width: 600px;
         }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--light-gold);
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        
+        .hero-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
         }
-
-        .hero p {
-            font-size: 1.4rem;
+        
+        .hero-content p {
+            font-size: 1.1rem;
             line-height: 1.6;
-            margin-bottom: 2rem;
+            margin-bottom: 30px;
         }
-
-        .hero-highlight {
-            color: var(--light-gold);
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            text-decoration: none;
+            border-radius: 4px;
             font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
         }
-
-        /* Login Section */
-        .login-section {
-            background: var(--light);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 3rem;
-            max-width: 500px;
-            margin: -50px auto 5rem;
-            position: relative;
-            z-index: 10;
-            border: 1px solid var(--gold);
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-
-        .login-section::before {
-            content: '';
-            position: absolute;
+        
+        .login-modal {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
         }
-
-        .login-title {
+        
+        .login-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .login-content h3 {
+            margin-top: 0;
+            color: var(--dark-color);
             text-align: center;
-            margin-bottom: 2rem;
-            color: var(--dark);
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
-
-        .input-group {
-            margin-bottom: 1.5rem;
+        
+        .form-group {
+            margin-bottom: 20px;
         }
-
-        .input-group label {
+        
+        .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: var(--dark);
         }
-
-        .input-group input {
+        
+        .form-group input {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-size: 1rem;
-            transition: border-color 0.3s;
         }
-
-        .input-group input:focus {
-            border-color: var(--gold);
-            outline: none;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(to right, var(--dark-gold), var(--gold));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            color: #777;
         }
-
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-        }
-
+        
         .register-link {
             text-align: center;
-            margin-top: 1.5rem;
-            color: var(--dark);
+            margin-top: 20px;
         }
-
+        
         .register-link a {
-            color: var(--dark-gold);
+            color: var(--secondary-color);
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
         }
-
+        
         .register-link a:hover {
             text-decoration: underline;
         }
-
-        .whatsapp-contact {
-            background: linear-gradient(to right, #25D366, #128C7E);
+        
+        footer {
+            background-color: var(--dark-color);
             color: white;
-            padding: 15px;
-            border-radius: 8px;
             text-align: center;
-            margin-top: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        
+        .social-icons {
+            margin: 20px 0;
+        }
+        
+        .social-icons a {
+            color: white;
+            margin: 0 10px;
+            font-size: 1.5rem;
             transition: all 0.3s;
         }
-
-        .whatsapp-contact:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        
+        .social-icons a:hover {
+            color: var(--primary-color);
         }
-
-        .whatsapp-contact a {
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: var(--cream);
-            padding: 3rem 5%;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            text-align: left;
-        }
-
-        .footer-column h3 {
-            color: var(--light-gold);
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        .footer-column h3::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--gold);
-        }
-
-        .footer-column p, .footer-column li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        .footer-column ul {
-            list-style: none;
-        }
-
-        .footer-column li i {
-            color: var(--light-gold);
-            margin-right: 10px;
-            width: 20px;
-        }
-
-        .copyright {
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* Responsive */
+        
         @media (max-width: 768px) {
-            header {
+            .header-content {
                 flex-direction: column;
-                padding: 1rem;
+                text-align: center;
             }
             
-            .logo {
-                margin-bottom: 1rem;
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
             }
             
-            .hero h1 {
-                font-size: 2.5rem;
+            nav ul li {
+                margin: 0 10px;
             }
             
-            .hero p {
-                font-size: 1.1rem;
+            .hero-content {
+                text-align: center;
+                padding: 0 20px;
             }
             
-            .login-section {
-                padding: 2rem;
-                margin: -30px auto 3rem;
+            .hero-content h2 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
-        <div class="logo">
-            <i class="fas fa-book logo-icon"></i>
-            <div class="logo-text">Koperasi Mahida</div>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <div class="logo-text">
+                    <h1>Koperasi Mahida</h1>
+                    <p>Toko Kitab Berkualitas</p>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Beranda</a></li>
+                    <li><a href="#">Produk</a></li>
+                    <li><a href="#">Tentang Kami</a></li>
+                    <li><a href="#">Kontak</a></li>
+                    <li><a href="#" id="loginBtn">Login</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
-
-    <!-- Hero Section -->
+    
     <section class="hero">
-        <div class="hero-content">
-            <h1>Koperasi Mahida - Toko Kitab</h1>
-            <p>Selamat datang di sistem akuntansi <span class="hero-highlight">Koperasi Mahida</span>, pusat penyedia kitab-kitab berkualitas untuk kebutuhan pendidikan dan spiritual Anda.</p>
-            <p>Kami menyediakan berbagai macam kitab dari berbagai disiplin ilmu dengan sistem koperasi yang mengutamakan kesejahteraan anggota.</p>
+        <div class="container hero-content">
+            <h2>Selamat Datang di Koperasi Mahida</h2>
+            <p>Koperasi Mahida adalah toko kitab yang menyediakan berbagai kitab-kitab berkualitas untuk kebutuhan pembelajaran agama. Kami berkomitmen untuk menyediakan literatur Islami yang autentik dan mudah diakses oleh seluruh masyarakat.</p>
+            <a href="#produk" class="btn">Lihat Produk</a>
         </div>
     </section>
-
-    <!-- Login Section -->
-    <div class="login-section">
-        <h2 class="login-title">Login Sistem Akuntansi</h2>
-        <form id="loginForm">
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Masukkan email Anda" required>
+    
+    <section class="container" style="padding: 50px 0;">
+        <h2 style="text-align: center; color: var(--dark-color); margin-bottom: 30px;">Mengapa Memilih Koperasi Mahida?</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                <h3 style="margin-top: 0;">Kitab Berkualitas</h3>
+                <p>Kami hanya menyediakan kitab-kitab dengan kualitas terbaik dari penerbit terpercaya.</p>
             </div>
-            
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Masukkan password Anda" required>
+            <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <i class="fas fa-truck" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                <h3 style="margin-top: 0;">Pengiriman Cepat</h3>
+                <p>Proses pengiriman cepat dan aman ke seluruh wilayah Indonesia.</p>
             </div>
-            
-            <button type="submit" class="btn">Login</button>
-            
-            <div class="register-link">
-                <p>Belum punya akun? Hubungi admin untuk pendaftaran</p>
-            </div>
-            
-            <div class="whatsapp-contact">
-                <i class="fab fa-whatsapp"></i>
-                <p>Hubungi Admin via WhatsApp: <a href="https://wa.me/6285735041602">085735041602</a></p>
-            </div>
-        </form>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-column">
-                <h3>Tentang Kami</h3>
-                <p>Koperasi Mahida adalah toko kitab yang menyediakan berbagai kebutuhan literatur keislaman dengan sistem koperasi yang mengutamakan kesejahteraan anggota.</p>
-            </div>
-            
-            <div class="footer-column">
-                <h3>Kontak Kami</h3>
-                <ul>
-                    <li><i class="fas fa-map-marker-alt"></i> Jl. Pendidikan No. 123, Kota Mahida</li>
-                    <li><i class="fas fa-phone"></i> (021) 1234-5678</li>
-                    <li><i class="fab fa-whatsapp"></i> 0857-3504-1602</li>
-                    <li><i class="fas fa-envelope"></i> info@koperasimahida.com</li>
-                </ul>
-            </div>
-            
-            <div class="footer-column">
-                <h3>Jam Operasional</h3>
-                <ul>
-                    <li><i class="far fa-clock"></i> Senin-Jumat: 08:00 - 17:00</li>
-                    <li><i class="far fa-clock"></i> Sabtu: 08:00 - 15:00</li>
-                    <li><i class="far fa-clock"></i> Minggu & Hari Libur: Tutup</li>
-                </ul>
+            <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <i class="fas fa-headset" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                <h3 style="margin-top: 0;">Layanan Pelanggan</h3>
+                <p>Tim kami siap membantu Anda dalam memilih kitab yang sesuai kebutuhan.</p>
             </div>
         </div>
-        
-        <div class="copyright">
-            <p>&copy; 2023 Koperasi Mahida. Hak Cipta Dilindungi.</p>
+    </section>
+    
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h3>Login Akun</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <div class="register-link">
+                <p>Belum punya akun? <a href="https://wa.me/6285735041602" target="_blank">Hubungi Admin</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/6285735041602" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <p>&copy; 2023 Koperasi Mahida. Semua Hak Dilindungi.</p>
         </div>
     </footer>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
-
+    
     <script>
-        // Konfigurasi Firebase (ganti dengan konfigurasi Anda)
-        const firebaseConfig = {
+        // Firebase configuration
+       const firebaseConfig = {
   apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
   authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
   projectId: "koperasi-mahida-24f7b",
@@ -401,13 +367,37 @@
   messagingSenderId: "399595189627",
   appId: "1:399595189627:web:eaedd97ba36718206bb9de"
 };
-
-        // Inisialisasi Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-
-        // Fungsi Login
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+        
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.getElementById('closeModal');
+        const loginForm = document.getElementById('loginForm');
+        
+        // Show modal when login button clicked
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.style.display = 'flex';
+        });
+        
+        // Close modal when X clicked
+        closeModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+        });
+        
+        // Login form submission
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
@@ -415,49 +405,28 @@
             
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Login berhasil
+                    // Signed in
                     const user = userCredential.user;
+                    console.log("User logged in:", user);
                     window.location.href = "beranda.html";
                 })
                 .catch((error) => {
-                    // Handle error
                     const errorCode = error.code;
                     const errorMessage = error.message;
-                    
-                    // Pesan error yang lebih user-friendly
-                    let friendlyMessage = "Login gagal. Silakan coba lagi.";
-                    
-                    if (errorCode === "auth/invalid-email") {
-                        friendlyMessage = "Email tidak valid";
-                    } else if (errorCode === "auth/user-not-found") {
-                        friendlyMessage = "Akun tidak ditemukan";
-                    } else if (errorCode === "auth/wrong-password") {
-                        friendlyMessage = "Password salah";
-                    } else if (errorCode === "auth/too-many-requests") {
-                        friendlyMessage = "Terlalu banyak percobaan gagal. Coba lagi nanti";
-                    }
-                    
-                    alert(friendlyMessage);
+                    alert("Login gagal: " + errorMessage);
                 });
         });
-
-        // Cek status login
+        
+        // Check auth state
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // User sudah login, redirect ke beranda
-                window.location.href = "beranda.html";
+                // User is signed in
+                console.log("User is logged in:", user);
+            } else {
+                // User is signed out
+                console.log("User is logged out");
             }
         });
-
-        // Fungsi untuk cek koneksi internet
-        function checkInternetConnection() {
-            if (!navigator.onLine) {
-                alert("Anda sedang offline. Silakan periksa koneksi internet Anda.");
-            }
-        }
-
-        // Panggil fungsi cek koneksi saat halaman dimuat
-        window.addEventListener('load', checkInternetConnection);
     </script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,70 +12,53 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #FFD700;
-            --secondary: #D4AF37;
-            --dark: #6B5B00;
-            --light: #FFF8DC;
-            --danger: #dc3545;
+            --primary-color: #FFD700;
+            --secondary-color: #D4AF37;
+            --dark-color: #6B5B00;
+            --light-color: #FFF8DC;
         }
-        
-        * {
-            box-sizing: border-box;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--light);
+            background-color: var(--light-color);
             color: #333;
             overflow-x: hidden;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 15px 0;
+            padding: 20px 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-bottom: 4px solid var(--dark);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            border-bottom: 4px solid var(--dark-color);
         }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
+
         .logo {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        
-        .logo i {
-            font-size: 2rem;
-        }
-        
+
         .logo-text h1 {
-            font-size: 1.5rem;
             margin: 0;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
-        
-        .logo-text p {
-            font-size: 0.8rem;
-            margin: 0;
-            opacity: 0.9;
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
+
         .user-profile {
             display: flex;
             align-items: center;
@@ -86,37 +68,25 @@
             border-radius: 50px;
             cursor: pointer;
         }
-        
-        .user-profile img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        
+
         .btn-back {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             padding: 8px 15px;
-            background-color: var(--dark);
+            background-color: var(--dark-color);
             color: white;
             text-decoration: none;
             border-radius: 5px;
-            margin: 15px 0;
-            transition: background-color 0.3s;
+            margin-bottom: 20px;
         }
-        
-        .btn-back:hover {
-            background-color: #5a4d00;
-        }
-        
+
         .tabs {
             display: flex;
             border-bottom: 2px solid #ddd;
             margin-bottom: 20px;
         }
-        
+
         .tab {
             padding: 10px 20px;
             cursor: pointer;
@@ -125,122 +95,86 @@
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
         }
-        
+
         .tab.active {
-            color: var(--dark);
-            border-bottom-color: var(--primary);
+            color: var(--dark-color);
+            border-bottom-color: var(--primary-color);
         }
-        
+
         .tab-content {
             display: none;
-            animation: fadeIn 0.5s;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .table-container {
+            overflow-x: auto;
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            padding: 15px;
-            overflow-x: auto;
+            padding: 20px;
+            margin-bottom: 30px;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
         }
-        
+
         th, td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
-        
+
         th {
             background-color: #FFF9E6;
-            color: var(--dark);
+            color: var(--dark-color);
             font-weight: 600;
-            position: sticky;
-            top: 0;
         }
-        
+
         tr:hover {
             background-color: #f9f9f9;
         }
-        
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .badge-usmani {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-        
-        .badge-mahida {
-            background-color: #e8f5e9;
-            color: #388e3c;
-        }
-        
-        .badge-nonusmani {
-            background-color: #f3e5f5;
-            color: #8e24aa;
-        }
-        
+
         .action-buttons {
             display: flex;
             gap: 5px;
         }
-        
+
         .btn-action {
             padding: 5px 10px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.2s;
         }
-        
+
         .btn-edit {
-            background-color: var(--primary);
-            color: var(--dark);
+            background-color: var(--primary-color);
+            color: var(--dark-color);
         }
-        
+
         .btn-delete {
-            background-color: var(--danger);
+            background-color: #ff6b6b;
             color: white;
         }
-        
-        .btn-action:hover {
-            opacity: 0.8;
-            transform: translateY(-1px);
-        }
-        
+
         .fab-container {
             position: fixed;
             bottom: 30px;
             right: 30px;
             z-index: 100;
         }
-        
+
         .fab {
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background-color: var(--primary);
-            color: var(--dark);
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -248,37 +182,25 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .fab:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
-        
-        .fab i {
-            font-size: 1.5rem;
-        }
-        
-        .modal-overlay {
+
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
         }
-        
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
+
         .modal-content {
             background-color: white;
             border-radius: 10px;
@@ -287,14 +209,8 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            transform: translateY(20px);
-            transition: transform 0.3s;
         }
-        
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-        
+
         .modal-header {
             padding: 20px;
             border-bottom: 1px solid #eee;
@@ -302,15 +218,12 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .modal-header h2 {
             margin: 0;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: var(--dark-color);
         }
-        
+
         .close-modal {
             background: none;
             border: none;
@@ -318,106 +231,71 @@
             cursor: pointer;
             color: #777;
         }
-        
+
         .modal-body {
             padding: 20px;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #555;
         }
-        
-        .form-group input, 
-        .form-group select, 
-        .form-group textarea {
+
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 1rem;
-            transition: border-color 0.3s;
         }
-        
-        .form-group input:focus, 
-        .form-group select:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
-        }
-        
+
         .form-row {
             display: flex;
             gap: 15px;
         }
-        
+
         .form-row .form-group {
             flex: 1;
         }
-        
+
         .items-container {
             margin-top: 20px;
         }
-        
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
+
         .item-row {
             display: flex;
             gap: 15px;
             margin-bottom: 15px;
             align-items: flex-end;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            position: relative;
         }
-        
-        .item-row .form-group {
-            margin-bottom: 0;
-        }
-        
-        .btn-remove-item {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        
+
         .btn-add-item {
-            background-color: var(--primary);
-            color: var(--dark);
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             border: none;
             border-radius: 5px;
             padding: 10px 15px;
             cursor: pointer;
             font-weight: 600;
             margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
         }
-        
-        .btn-add-item:hover {
-            background-color: var(--secondary);
+
+        .btn-remove-item {
+            background-color: #ff6b6b;
             color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
         }
-        
+
         .modal-footer {
             padding: 15px 20px;
             border-top: 1px solid #eee;
@@ -425,57 +303,27 @@
             justify-content: flex-end;
             gap: 10px;
         }
-        
+
         .btn {
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
-        
+
         .btn-primary {
-            background-color: var(--primary);
-            color: var(--dark);
+            background-color: var(--primary-color);
+            color: var(--dark-color);
             border: none;
         }
-        
-        .btn-primary:hover {
-            background-color: var(--secondary);
-            color: white;
-        }
-        
+
         .btn-secondary {
             background-color: #f0f0f0;
             color: #333;
             border: none;
         }
-        
-        .btn-secondary:hover {
-            background-color: #e0e0e0;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-        }
-        
-        .empty-state i {
-            font-size: 3rem;
-            color: #ddd;
-            margin-bottom: 15px;
-        }
-        
+
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
             .form-row, .item-row {
                 flex-direction: column;
                 gap: 10px;
@@ -484,29 +332,25 @@
             .modal-content {
                 width: 95%;
             }
-            
-            table {
-                min-width: 100%;
-            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <div class="header-content">
+            <nav>
                 <div class="logo">
-                    <i class="fas fa-book-open"></i>
+                    <i class="fas fa-book-open" style="font-size: 2.5rem; color: white;"></i>
                     <div class="logo-text">
                         <h1>Koperasi Mahida</h1>
                         <p>Sistem Akuntansi Toko Kitab</p>
                     </div>
                 </div>
                 <div class="user-profile">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=fff&color=6B5B00" alt="User" id="userAvatar">
+                    <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
                     <span id="userName">Admin</span>
                 </div>
-            </div>
+            </nav>
         </div>
     </header>
     
@@ -515,14 +359,11 @@
             <i class="fas fa-arrow-left"></i> Kembali ke Beranda
         </a>
         
-        <h1><i class="fas fa-boxes"></i> Manajemen Pemasukan Barang</h1>
-        
         <div class="tabs">
             <div class="tab active" data-tab="gudang">Gudang</div>
             <div class="tab" data-tab="pemasukan">Pemasukan Barang</div>
         </div>
         
-        <!-- Tab Gudang -->
         <div class="tab-content active" id="gudang">
             <div class="table-container">
                 <table id="gudangTable">
@@ -540,17 +381,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="8" class="empty-state">
-                                <i class="fas fa-box-open"></i>
-                                <p>Data gudang sedang dimuat...</p>
-                            </td>
+                            <td colspan="8" style="text-align: center;">Memuat data gudang...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
         
-        <!-- Tab Pemasukan -->
         <div class="tab-content" id="pemasukan">
             <div class="table-container">
                 <table id="pemasukanTable">
@@ -569,10 +406,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="9" class="empty-state">
-                                <i class="fas fa-receipt"></i>
-                                <p>Data pemasukan sedang dimuat...</p>
-                            </td>
+                            <td colspan="9" style="text-align: center;">Memuat data pemasukan...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -588,7 +422,7 @@
     </div>
     
     <!-- Modal Input Pemasukan -->
-    <div class="modal-overlay" id="inputModal">
+    <div class="modal" id="inputModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class="fas fa-boxes"></i> Input Pemasukan Barang</h2>
@@ -603,7 +437,7 @@
                         </div>
                         <div class="form-group">
                             <label for="inputToko">Toko</label>
-                            <input type="text" id="inputToko" required placeholder="Nama toko/supplier">
+                            <input type="text" id="inputToko" required placeholder="Nama toko">
                         </div>
                     </div>
                     <div class="form-group">
@@ -617,68 +451,67 @@
                     </div>
                     
                     <div class="items-container" id="itemsContainer">
-                        <div class="item-header">
-                            <h3><i class="fas fa-list"></i> Daftar Barang</h3>
+                        <h3>Item Barang</h3>
+                        <div class="item-row">
+                            <div class="form-group">
+                                <label for="itemNamaKitab0">Nama Kitab</label>
+                                <input type="text" id="itemNamaKitab0" required placeholder="Nama kitab">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemJumlah0">Jumlah</label>
+                                <input type="number" id="itemJumlah0" required placeholder="Jumlah" min="1" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="itemTotalBayar0">Total Bayar (Rp)</label>
+                                <input type="number" id="itemTotalBayar0" required placeholder="Total bayar" min="0">
+                            </div>
+                            <button type="button" class="btn-remove-item" disabled>
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
-                        
-                        <!-- Item template akan diisi oleh JavaScript -->
                     </div>
                     
                     <button type="button" class="btn-add-item" id="addItemBtn">
-                        <i class="fas fa-plus-circle"></i> Tambah Item Barang
+                        <i class="fas fa-plus"></i> Tambah Item
                     </button>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelBtn">
-                    <i class="fas fa-times"></i> Keluar
-                </button>
-                <button class="btn btn-primary" id="saveBtn">
-                    <i class="fas fa-save"></i> Simpan Data
-                </button>
+                <button class="btn btn-secondary" id="cancelBtn">Keluar</button>
+                <button class="btn btn-primary" id="saveBtn">Simpan</button>
             </div>
         </div>
     </div>
     
     <!-- Modal Edit Harga -->
-    <div class="modal-overlay" id="editHargaModal">
+    <div class="modal" id="editHargaModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
-                <h2><i class="fas fa-edit"></i> Edit Harga Jual</h2>
+                <h2><i class="fas fa-edit"></i> Edit Harga</h2>
                 <button class="close-modal" id="closeEditModal">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="editHargaForm">
                     <div class="form-group">
-                        <label for="editNamaBarang">Nama Barang</label>
-                        <input type="text" id="editNamaBarang" readonly>
+                        <label for="editHargaLembaga">Harga Jual Lembaga</label>
+                        <input type="number" id="editHargaLembaga" required min="0">
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editHargaLembaga">Harga Lembaga</label>
-                            <input type="number" id="editHargaLembaga" required min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="editHargaKonsumen">Harga Konsumen</label>
-                            <input type="number" id="editHargaKonsumen" required min="0">
-                        </div>
+                    <div class="form-group">
+                        <label for="editHargaKonsumen">Harga Jual Konsumen</label>
+                        <input type="number" id="editHargaKonsumen" required min="0">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelEditBtn">
-                    <i class="fas fa-times"></i> Batal
-                </button>
-                <button class="btn btn-primary" id="saveEditBtn">
-                    <i class="fas fa-save"></i> Simpan Perubahan
-                </button>
+                <button class="btn btn-secondary" id="cancelEditBtn">Batal</button>
+                <button class="btn btn-primary" id="saveEditBtn">Simpan</button>
             </div>
         </div>
     </div>
-    
+
     <script>
-        // Firebase Configuration (Ganti dengan config Anda)
-       const firebaseConfig = {
+        // Firebase configuration (ganti dengan config Anda)
+        const firebaseConfig = {
   apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
   authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
   projectId: "koperasi-mahida-24f7b",
@@ -689,12 +522,10 @@
         
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
+        const auth = firebase.auth();
         
         // DOM Elements
-        const userName = document.getElementById('userName');
-        const userAvatar = document.getElementById('userAvatar');
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
         const fabButton = document.getElementById('fabButton');
@@ -712,14 +543,15 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const saveEditBtn = document.getElementById('saveEditBtn');
         const editHargaForm = document.getElementById('editHargaForm');
-        const editNamaBarang = document.getElementById('editNamaBarang');
-        const editHargaLembaga = document.getElementById('editHargaLembaga');
-        const editHargaKonsumen = document.getElementById('editHargaKonsumen');
+        const userName = document.getElementById('userName');
         
-        // Global Variables
-        let currentUser = null;
+        // Variabel global
         let currentEditingId = null;
-        let items = [];
+        let items = [{
+            namaKitab: '',
+            jumlah: 1,
+            totalBayar: 0
+        }];
         
         // Format Rupiah
         function formatRupiah(angka) {
@@ -732,298 +564,213 @@
         
         // Format Tanggal
         function formatDate(dateString) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('id-ID', options);
-        }
-        
-        // Format Keterangan
-        function formatKeterangan(keterangan) {
-            if (keterangan === 'Usmani') return '<span class="badge badge-usmani">Usmani</span>';
-            if (keterangan === 'Mahida') return '<span class="badge badge-mahida">Mahida</span>';
-            return '<span class="badge badge-nonusmani">Non Usmani</span>';
         }
         
         // Initialize App
         function initApp() {
-            // Check auth state
-            auth.onAuthStateChanged((user) => {
+            // Set tanggal hari ini sebagai default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputTanggal').value = today;
+            
+            // Load data
+            loadGudangData();
+            loadPemasukanData();
+            
+            // Set user name
+            auth.onAuthStateChanged(user => {
                 if (user) {
-                    currentUser = user;
                     userName.textContent = user.displayName || user.email.split('@')[0];
-                    userAvatar.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName.textContent)}&background=fff&color=6B5B00`;
-                    
-                    // Load data
-                    loadGudangData();
-                    loadPemasukanData();
                 } else {
                     window.location.href = 'index.html';
                 }
             });
-            
-            // Set today's date as default
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('inputTanggal').value = today;
-            
-            // Initialize items array with one empty item
-            items = [createEmptyItem()];
-            renderItems();
-            
-            // Setup event listeners
-            setupEventListeners();
         }
         
-        // Create empty item object
-        function createEmptyItem() {
-            return {
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+                
+                // Show/hide FAB based on active tab
+                fabButton.style.display = tab.dataset.tab === 'pemasukan' ? 'flex' : 'none';
+            });
+        });
+        
+        // Modal handling
+        fabButton.addEventListener('click', () => {
+            inputModal.style.display = 'flex';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            inputModal.style.display = 'none';
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            inputModal.style.display = 'none';
+        });
+        
+        closeEditModal.addEventListener('click', () => {
+            editHargaModal.style.display = 'none';
+        });
+        
+        cancelEditBtn.addEventListener('click', () => {
+            editHargaModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === inputModal) {
+                inputModal.style.display = 'none';
+            }
+            if (e.target === editHargaModal) {
+                editHargaModal.style.display = 'none';
+            }
+        });
+        
+        // Add item button
+        addItemBtn.addEventListener('click', () => {
+            items.push({
                 namaKitab: '',
                 jumlah: 1,
-                totalBayar: 0,
-                hargaSatuan: 0
-            };
-        }
+                totalBayar: 0
+            });
+            renderItems();
+        });
         
         // Render items in form
         function renderItems() {
             itemsContainer.innerHTML = `
-                <div class="item-header">
-                    <h3><i class="fas fa-list"></i> Daftar Barang</h3>
-                </div>
+                <h3>Item Barang</h3>
+                ${items.map((item, index) => `
+                    <div class="item-row" data-index="${index}">
+                        <div class="form-group">
+                            <label for="itemNamaKitab${index}">Nama Kitab</label>
+                            <input type="text" id="itemNamaKitab${index}" value="${item.namaKitab}" required placeholder="Nama kitab">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemJumlah${index}">Jumlah</label>
+                            <input type="number" id="itemJumlah${index}" value="${item.jumlah}" required placeholder="Jumlah" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemTotalBayar${index}">Total Bayar (Rp)</label>
+                            <input type="number" id="itemTotalBayar${index}" value="${item.totalBayar}" required placeholder="Total bayar" min="0">
+                        </div>
+                        <button type="button" class="btn-remove-item" ${items.length === 1 ? 'disabled' : ''}>
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('')}
             `;
             
+            // Add event listeners to all remove buttons
+            document.querySelectorAll('.btn-remove-item').forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    if (items.length > 1) {
+                        items.splice(index, 1);
+                        renderItems();
+                    }
+                });
+            });
+            
+            // Add event listeners to all inputs
             items.forEach((item, index) => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'item-row';
-                itemElement.dataset.index = index;
-                itemElement.innerHTML = `
-                    <button type="button" class="btn-remove-item" ${items.length === 1 ? 'disabled' : ''}>
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="form-group" style="flex: 2;">
-                        <label for="itemNamaKitab${index}">Nama Kitab</label>
-                        <input type="text" id="itemNamaKitab${index}" value="${item.namaKitab}" 
-                               required placeholder="Nama kitab" class="item-nama">
-                    </div>
-                    <div class="form-group">
-                        <label for="itemJumlah${index}">Jumlah</label>
-                        <input type="number" id="itemJumlah${index}" value="${item.jumlah}" 
-                               required placeholder="Jumlah" min="1" class="item-jumlah">
-                    </div>
-                    <div class="form-group">
-                        <label for="itemTotalBayar${index}">Total Bayar (Rp)</label>
-                        <input type="number" id="itemTotalBayar${index}" value="${item.totalBayar}" 
-                               required placeholder="Total bayar" min="0" class="item-total">
-                    </div>
-                    <div class="form-group">
-                        <label>Harga Satuan</label>
-                        <div style="padding: 10px; background: #f5f5f5; border-radius: 5px;">
-                            ${formatRupiah(item.hargaSatuan)}
-                        </div>
-                    </div>
-                `;
-                itemsContainer.appendChild(itemElement);
+                const namaKitabInput = document.getElementById(`itemNamaKitab${index}`);
+                const jumlahInput = document.getElementById(`itemJumlah${index}`);
+                const totalBayarInput = document.getElementById(`itemTotalBayar${index}`);
                 
-                // Add event listeners
-                const namaInput = itemElement.querySelector('.item-nama');
-                const jumlahInput = itemElement.querySelector('.item-jumlah');
-                const totalInput = itemElement.querySelector('.item-total');
-                const removeBtn = itemElement.querySelector('.btn-remove-item');
-                
-                namaInput.addEventListener('change', (e) => {
+                namaKitabInput.addEventListener('change', (e) => {
                     items[index].namaKitab = e.target.value;
                 });
                 
                 jumlahInput.addEventListener('change', (e) => {
-                    items[index].jumlah = parseInt(e.target.value) || 0;
-                    calculateHargaSatuan(index);
+                    items[index].jumlah = parseInt(e.target.value);
                 });
                 
-                totalInput.addEventListener('change', (e) => {
-                    items[index].totalBayar = parseInt(e.target.value) || 0;
-                    calculateHargaSatuan(index);
+                totalBayarInput.addEventListener('change', (e) => {
+                    items[index].totalBayar = parseInt(e.target.value);
                 });
-                
-                if (removeBtn) {
-                    removeBtn.addEventListener('click', () => {
-                        if (items.length > 1) {
-                            items.splice(index, 1);
-                            renderItems();
-                        }
-                    });
-                }
             });
         }
         
-        // Calculate harga satuan
-        function calculateHargaSatuan(index) {
-            if (items[index].jumlah > 0 && items[index].totalBayar > 0) {
-                items[index].hargaSatuan = Math.round(items[index].totalBayar / items[index].jumlah);
-                renderItems(); // Refresh display
+        // Save pemasukan data
+        saveBtn.addEventListener('click', async () => {
+            const tanggal = document.getElementById('inputTanggal').value;
+            const toko = document.getElementById('inputToko').value;
+            const keterangan = document.getElementById('inputKeterangan').value;
+            
+            // Validate items
+            let isValid = true;
+            items.forEach(item => {
+                if (!item.namaKitab || !item.jumlah || !item.totalBayar) {
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                alert('Harap isi semua field dengan benar');
+                return;
             }
-        }
-        
-        // Setup event listeners
-        function setupEventListeners() {
-            // Tab switching
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
+            
+            try {
+                // Save each item to pemasukan collection
+                for (const item of items) {
+                    const hargaSatuan = Math.round(item.totalBayar / item.jumlah);
                     
-                    tab.classList.add('active');
-                    document.getElementById(tab.dataset.tab).classList.add('active');
+                    // Add to pemasukan collection
+                    await db.collection('pemasukan').add({
+                        tanggal,
+                        toko,
+                        keterangan,
+                        namaKitab: item.namaKitab,
+                        jumlah: item.jumlah,
+                        hargaSatuan,
+                        totalBayar: item.totalBayar,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                     
-                    // Show/hide FAB based on active tab
-                    fabButton.style.display = tab.dataset.tab === 'pemasukan' ? 'flex' : 'none';
-                });
-            });
-            
-            // FAB Button
-            fabButton.addEventListener('click', () => {
-                // Reset form
-                pemasukanForm.reset();
-                items = [createEmptyItem()];
-                renderItems();
-                
-                // Set today's date
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('inputTanggal').value = today;
-                
-                // Show modal
-                inputModal.classList.add('active');
-            });
-            
-            // Modal controls
-            closeModal.addEventListener('click', () => {
-                inputModal.classList.remove('active');
-            });
-            
-            cancelBtn.addEventListener('click', () => {
-                inputModal.classList.remove('active');
-            });
-            
-            closeEditModal.addEventListener('click', () => {
-                editHargaModal.classList.remove('active');
-            });
-            
-            cancelEditBtn.addEventListener('click', () => {
-                editHargaModal.classList.remove('active');
-            });
-            
-            // Add item button
-            addItemBtn.addEventListener('click', () => {
-                items.push(createEmptyItem());
-                renderItems();
-            });
-            
-            // Save pemasukan data
-            saveBtn.addEventListener('click', async () => {
-                const tanggal = document.getElementById('inputTanggal').value;
-                const toko = document.getElementById('inputToko').value;
-                const keterangan = document.getElementById('inputKeterangan').value;
-                
-                // Validate form
-                if (!tanggal || !toko || !keterangan) {
-                    alert('Harap isi semua field utama');
-                    return;
-                }
-                
-                // Validate items
-                let isValid = true;
-                items.forEach(item => {
-                    if (!item.namaKitab || item.jumlah <= 0 || item.totalBayar <= 0) {
-                        isValid = false;
-                    }
-                });
-                
-                if (!isValid) {
-                    alert('Harap isi semua item barang dengan benar');
-                    return;
-                }
-                
-                try {
-                    // Save each item to Firestore
-                    for (const item of items) {
-                        const hargaSatuan = Math.round(item.totalBayar / item.jumlah);
-                        
-                        // 1. Add to pemasukan collection
-                        await db.collection('pemasukan').add({
-                            tanggal,
-                            toko,
+                    // Update or add to gudang collection
+                    const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
+                    const snapshot = await gudangRef.get();
+                    
+                    if (snapshot.empty) {
+                        // Create new document in gudang
+                        await db.collection('gudang').add({
+                            namaBarang: item.namaKitab,
                             keterangan,
-                            namaKitab: item.namaKitab,
-                            jumlah: item.jumlah,
-                            hargaSatuan,
-                            totalBayar: item.totalBayar,
+                            stok: item.jumlah,
+                            hargaBeli: hargaSatuan,
+                            hargaJualLembaga: 0,
+                            hargaJualKonsumen: 0,
                             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdBy: currentUser.uid
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
-                        
-                        // 2. Update gudang collection
-                        const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
-                        const snapshot = await gudangRef.get();
-                        
-                        if (snapshot.empty) {
-                            // Create new document in gudang
-                            await db.collection('gudang').add({
-                                namaBarang: item.namaKitab,
-                                keterangan,
-                                stok: item.jumlah,
+                    } else {
+                        // Update existing document
+                        snapshot.forEach(async doc => {
+                            await db.collection('gudang').doc(doc.id).update({
+                                stok: firebase.firestore.FieldValue.increment(item.jumlah),
                                 hargaBeli: hargaSatuan,
-                                hargaJualLembaga: 0,
-                                hargaJualKonsumen: 0,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                             });
-                        } else {
-                            // Update existing document
-                            snapshot.forEach(async doc => {
-                                await db.collection('gudang').doc('vE71e2GoJKc5LzdmGcEe').update({
-                                    stok: firebase.firestore.FieldValue.increment(item.jumlah),
-                                    hargaBeli: hargaSatuan,
-                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                                });
-                            });
-                        }
+                        });
                     }
-                    
-                    alert('Data pemasukan berhasil disimpan!');
-                    inputModal.classList.remove('active');
-                    loadGudangData();
-                    loadPemasukanData();
-                } catch (error) {
-                    console.error('Error saving data:', error);
-                    alert('Terjadi kesalahan saat menyimpan data');
-                }
-            });
-            
-            // Save edited harga
-            saveEditBtn.addEventListener('click', async () => {
-                if (!currentEditingId) return;
-                
-                const hargaLembaga = parseInt(editHargaLembaga.value) || 0;
-                const hargaKonsumen = parseInt(editHargaKonsumen.value) || 0;
-                
-                if (hargaLembaga <= 0 || hargaKonsumen <= 0) {
-                    alert('Harga harus lebih dari 0');
-                    return;
                 }
                 
-                try {
-                    await db.collection('gudang').doc('vE71e2GoJKc5LzdmGcEe').update({
-                        hargaJualLembaga: hargaLembaga,
-                        hargaJualKonsumen: hargaKonsumen,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    alert('Harga berhasil diperbarui!');
-                    editHargaModal.classList.remove('active');
-                    loadGudangData();
-                } catch (error) {
-                    console.error('Error updating harga:', error);
-                    alert('Gagal memperbarui harga');
-                }
-            });
-        }
+                alert('Data pemasukan berhasil disimpan');
+                inputModal.style.display = 'none';
+                loadGudangData();
+                loadPemasukanData();
+            } catch (error) {
+                console.error('Error saving data: ', error);
+                alert('Terjadi kesalahan saat menyimpan data');
+            }
+        });
         
         // Load gudang data
         async function loadGudangData() {
@@ -1034,10 +781,7 @@
                 if (snapshot.empty) {
                     gudangTable.innerHTML = `
                         <tr>
-                            <td colspan="8" class="empty-state">
-                                <i class="fas fa-box-open"></i>
-                                <p>Belum ada data gudang</p>
-                            </td>
+                            <td colspan="8" style="text-align: center;">Tidak ada data gudang</td>
                         </tr>
                     `;
                     return;
@@ -1051,35 +795,31 @@
                     row.innerHTML = `
                         <td>${counter++}</td>
                         <td>${data.namaBarang}</td>
-                        <td>${formatKeterangan(data.keterangan)}</td>
+                        <td>${data.keterangan || '-'}</td>
                         <td>${data.stok}</td>
                         <td>${formatRupiah(data.hargaBeli || 0)}</td>
                         <td>${formatRupiah(data.hargaJualLembaga || 0)}</td>
                         <td>${formatRupiah(data.hargaJualKonsumen || 0)}</td>
                         <td class="action-buttons">
-                            <button class="btn-action btn-edit" data-id="${'vE71e2GoJKc5LzdmGcEe'}">
-                                <i class="fas fa-edit"></i> Edit
+                            <button class="btn-action btn-edit" data-id="${doc.id}">
+                                <i class="fas fa-edit"></i>
                             </button>
                         </td>
                     `;
-                    
-                    // Add event listener to edit button
-                    row.querySelector('.btn-edit').addEventListener('click', () => {
-                        currentEditingId = doc.id;
-                        editNamaBarang.value = data.namaBarang;
-                        editHargaLembaga.value = data.hargaJualLembaga || 0;
-                        editHargaKonsumen.value = data.hargaJualKonsumen || 0;
-                        editHargaModal.classList.add('active');
+                });
+                
+                // Add event listeners to edit buttons
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        editHarga(id);
                     });
                 });
             } catch (error) {
-                console.error('Error loading gudang data:', error);
+                console.error('Error loading gudang data: ', error);
                 gudangTable.innerHTML = `
                     <tr>
-                        <td colspan="8" class="empty-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>Gagal memuat data gudang</p>
-                        </td>
+                        <td colspan="8" style="text-align: center;">Gagal memuat data gudang</td>
                     </tr>
                 `;
             }
@@ -1088,27 +828,18 @@
         // Load pemasukan data
         async function loadPemasukanData() {
             try {
-                const snapshot = await db.collection('pemasukan')
-                    .orderBy('tanggal', 'desc')
-                    .orderBy('createdAt', 'desc')
-                    .get();
-                
+                const snapshot = await db.collection('pemasukan').orderBy('createdAt', 'desc').get();
                 pemasukanTable.innerHTML = '';
                 
                 if (snapshot.empty) {
                     pemasukanTable.innerHTML = `
                         <tr>
-                            <td colspan="9" class="empty-state">
-                                <i class="fas fa-receipt"></i>
-                                <p>Belum ada data pemasukan</p>
-                            </td>
+                            <td colspan="9" style="text-align: center;">Tidak ada data pemasukan</td>
                         </tr>
                     `;
                     return;
                 }
                 
-                let counter = 1;
-                snapshot.forEach(doc
                 let counter = 1;
                 snapshot.forEach(doc => {
                     const data = doc.data();
@@ -1124,7 +855,7 @@
                         <td>${formatRupiah(data.hargaSatuan || 0)}</td>
                         <td>${formatRupiah(data.totalBayar || 0)}</td>
                         <td class="action-buttons">
-                            <button class="btn-action btn-delete" data-id="${'8NklJcNwUohgP5PO4DIt'}">
+                            <button class="btn-action btn-delete" data-id="${doc.id}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -1137,7 +868,7 @@
                         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
                             const id = e.currentTarget.dataset.id;
                             try {
-                                await db.collection('pemasukan').doc('8NklJcNwUohgP5PO4DIt').delete();
+                                await db.collection('pemasukan').doc(id).delete();
                                 loadPemasukanData();
                                 alert('Data berhasil dihapus');
                             } catch (error) {
@@ -1160,7 +891,7 @@
         // Edit harga function
         async function editHarga(id) {
             try {
-                const doc = await db.collection('gudang').doc('vE71e2GoJKc5LzdmGcEe').get();
+                const doc = await db.collection('gudang').doc(id).get();
                 if (doc.exists) {
                     const data = doc.data();
                     document.getElementById('editHargaLembaga').value = data.hargaJualLembaga || 0;
@@ -1182,9 +913,10 @@
             const hargaKonsumen = parseInt(document.getElementById('editHargaKonsumen').value);
             
             try {
-                await db.collection('gudang').doc(''vE71e2GoJKc5LzdmGcEe).update({
+                await db.collection('gudang').doc(currentEditingId).update({
                     hargaJualLembaga: hargaLembaga,
-                    hargaJualKonsumen: hargaKonsumen
+                    hargaJualKonsumen: hargaKonsumen,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 alert('Harga berhasil diperbarui');
@@ -1195,6 +927,9 @@
                 alert('Gagal memperbarui harga');
             }
         });
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>

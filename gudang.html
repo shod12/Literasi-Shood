@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gudang - Koperasi Mahida</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #B8860B;
+            --light-gold: #FFD700;
+            --cream: #FFF8E1;
+            --dark: #2C2416;
+            --light: #FFFFFF;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+            color: var(--dark);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(to right, var(--dark), var(--dark-gold));
+            padding: 1rem 5%;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--light-gold);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--cream);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--gold);
+            color: var(--dark);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            display: inline-block;
+            padding: 0 20px;
+            background: var(--cream);
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            z-index: 0;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--light);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px var(--shadow);
+            overflow-x: auto;
+            margin-bottom: 4rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        thead {
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: var(--light);
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .stock-low {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .stock-normal {
+            color: #27ae60;
+        }
+
+        .editable {
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+        }
+
+        .editable:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+        }
+
+        .editable-input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit, .btn-save, .btn-cancel {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-edit:hover, .btn-save:hover, .btn-cancel:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(to right, var(--dark-gold), var(--gold));
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-book logo-icon"></i>
+            <div class="logo-text">Koperasi Mahida</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="beranda.html">Beranda</a></li>
+                <li><a href="pemasukan.html">Pemasukan</a></li>
+                <li><a href="penjualan.html">Penjualan</a></li>
+                <li><a href="laporan.html">Laporan</a></li>
+                <li><a href="dashboard.html" id="logoutBtn">Keluar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <a href="beranda.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+        </a>
+        
+        <div class="section-title">
+            <h2>Data Gudang</h2>
+        </div>
+        
+        <div class="table-container">
+            <table id="warehouseTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Kitab</th>
+                        <th>Stok</th>
+                        <th>Keterangan</th>
+                        <th>Harga Beli</th>
+                        <th>Harga Satuan</th>
+                        <th>Harga Jual Konsumen</th>
+                        <th>Harga Jual Lembaga</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="warehouseTableBody">
+                    <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
+
+    <script>
+        // Konfigurasi Firebase
+       const firebaseConfig = {
+  apiKey: "AIzaSyDwXdEyZxKsNdMuN8rWwk6t3q1W4GTcqsc",
+  authDomain: "koperasi-mahida-24f7b.firebaseapp.com",
+  projectId: "koperasi-mahida-24f7b",
+  storageBucket: "koperasi-mahida-24f7b.firebasestorage.app",
+  messagingSenderId: "399595189627",
+  appId: "1:399595189627:web:eaedd97ba36718206bb9de"
+};
+        // Inisialisasi Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Referensi ke koleksi
+        const warehouseRef = db.collection("warehouse");
+        const pemasukanRef = db.collection("pemasukan");
+        const penjualanRef = db.collection("penjualan");
+
+        // Elemen DOM
+        const warehouseTableBody = document.getElementById('warehouseTableBody');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Variabel untuk edit mode
+        let editMode = false;
+        let currentEditId = null;
+        let originalValues = {};
+
+        // Fungsi untuk menghitung stok
+        async function calculateStock() {
+            try {
+                // Ambil semua data pemasukan
+                const pemasukanSnapshot = await pemasukanRef.get();
+                const allPemasukan = [];
+                pemasukanSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.items.forEach(item => {
+                        allPemasukan.push({
+                            namaKitab: item.namaKitab,
+                            jumlah: item.jumlah,
+                            hargaSatuan: item.hargaSatuan,
+                            keterangan: data.keterangan
+                        });
+                    });
+                });
+
+                // Ambil semua data penjualan
+                const penjualanSnapshot = await penjualanRef.get();
+                const allPenjualan = [];
+                penjualanSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.items.forEach(item => {
+                        allPenjualan.push({
+                            namaKitab: item.namaKitab,
+                            jumlah: item.jumlah
+                        });
+                    });
+                });
+
+                // Hitung stok per item
+                const stockData = {};
+                allPemasukan.forEach(item => {
+                    if (!stockData[item.namaKitab]) {
+                        stockData[item.namaKitab] = {
+                            jumlah: 0,
+                            totalHargaBeli: 0,
+                            keterangan: item.keterangan,
+                            hargaSatuan: item.hargaSatuan
+                        };
+                    }
+                    stockData[item.namaKitab].jumlah += item.jumlah;
+                    stockData[item.namaKitab].totalHargaBeli += item.jumlah * item.hargaSatuan;
+                });
+
+                allPenjualan.forEach(item => {
+                    if (stockData[item.namaKitab]) {
+                        stockData[item.namaKitab].jumlah -= item.jumlah;
+                    }
+                });
+
+                // Simpan/update data ke warehouse
+                const batch = db.batch();
+                const warehouseSnapshot = await warehouseRef.get();
+                const existingItems = warehouseSnapshot.docs.reduce((acc, doc) => {
+                    acc[doc.data().namaKitab] = doc.id;
+                    return acc;
+                }, {});
+
+                for (const [namaKitab, data] of Object.entries(stockData)) {
+                    const hargaBeliRata = data.totalHargaBeli / data.jumlah;
+                    
+                    const itemData = {
+                        namaKitab,
+                        stok: data.jumlah,
+                        keterangan: data.keterangan,
+                        hargaBeli: hargaBeliRata,
+                        hargaSatuan: data.hargaSatuan,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    if (existingItems[namaKitab]) {
+                        const docRef = warehouseRef.doc(existingItems[namaKitab]);
+                        batch.update(docRef, itemData);
+                    } else {
+                        // Tambahkan harga jual default jika item baru
+                        itemData.hargaJualKonsumen = Math.ceil(data.hargaSatuan * 1.3); // 30% markup
+                        itemData.hargaJualLembaga = Math.ceil(data.hargaSatuan * 1.2); // 20% markup
+                        itemData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                        
+                        const docRef = warehouseRef.doc();
+                        batch.set(docRef, itemData);
+                    }
+                }
+
+                await batch.commit();
+                loadWarehouseData();
+
+            } catch (error) {
+                console.error('Error calculating stock:', error);
+                alert('Terjadi kesalahan saat menghitung stok');
+            }
+        }
+
+        // Muat data gudang dari Firestore
+        async function loadWarehouseData() {
+            try {
+                const snapshot = await warehouseRef.orderBy('namaKitab').get();
+                warehouseTableBody.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    warehouseTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Belum ada data gudang</td></tr>';
+                    return;
+                }
+                
+                let nomor = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-id', doc.id);
+                    
+                    // Tentukan class stok
+                    const stockClass = data.stok <= 5 ? 'stock-low' : 'stock-normal';
+                    
+                    row.innerHTML = `
+                        <td>${nomor}</td>
+                        <td>${data.namaKitab}</td>
+                        <td class="${stockClass}">${data.stok}</td>
+                        <td>${data.keterangan || '-'}</td>
+                        <td>Rp ${data.hargaBeli?.toLocaleString('id-ID') || '-'}</td>
+                        <td>Rp ${data.hargaSatuan?.toLocaleString('id-ID') || '-'}</td>
+                        <td class="editable" data-field="hargaJualKonsumen">Rp ${data.hargaJualKonsumen?.toLocaleString('id-ID') || '-'}</td>
+                        <td class="editable" data-field="hargaJualLembaga">Rp ${data.hargaJualLembaga?.toLocaleString('id-ID') || '-'}</td>
+                        <td class="actions">
+                            <button class="btn-edit" data-id="${doc.id}"><i class="fas fa-edit"></i></button>
+                        </td>
+                    `;
+                    warehouseTableBody.appendChild(row);
+                    nomor++;
+                });
+                
+                // Tambahkan event listener untuk editable cells
+                document.querySelectorAll('.editable').forEach(cell => {
+                    cell.addEventListener('click', function() {
+                        if (!editMode) {
+                            startEdit(this);
+                        }
+                    });
+                });
+                
+                // Tambahkan event listener untuk tombol edit
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        editItem(id);
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading warehouse data:', error);
+                warehouseTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: red;">Gagal memuat data gudang</td></tr>';
+            }
+        }
+
+        // Fungsi untuk edit item
+        async function editItem(id) {
+            try {
+                const doc = await warehouseRef.doc(id).get();
+                if (!doc.exists) {
+                    alert('Item tidak ditemukan');
+                    return;
+                }
+                
+                const data = doc.data();
+                currentEditId = id;
+                editMode = true;
+                originalValues = {
+                    hargaJualKonsumen: data.hargaJualKonsumen,
+                    hargaJualLembaga: data.hargaJualLembaga
+                };
+                
+                // Temukan baris yang sesuai
+                const row = document.querySelector(`tr[data-id="${id}"]`);
+                
+                // Ganti kolom harga dengan input
+                const konsumenCell = row.querySelector('[data-field="hargaJualKonsumen"]');
+                const lembagaCell = row.querySelector('[data-field="hargaJualLembaga"]');
+                
+                konsumenCell.innerHTML = `<input type="number" class="editable-input" value="${data.hargaJualKonsumen}">`;
+                lembagaCell.innerHTML = `<input type="number" class="editable-input" value="${data.hargaJualLembaga}">`;
+                
+                // Ganti tombol edit dengan save dan cancel
+                const actionCell = row.querySelector('.actions');
+                actionCell.innerHTML = `
+                    <button class="btn-save" data-id="${id}"><i class="fas fa-save"></i></button>
+                    <button class="btn-cancel" data-id="${id}"><i class="fas fa-times"></i></button>
+                `;
+                
+                // Tambahkan event listener untuk tombol save dan cancel
+                row.querySelector('.btn-save').addEventListener('click', () => saveItem(id));
+                row.querySelector('.btn-cancel').addEventListener('click', cancelEdit);
+                
+            } catch (error) {
+                console.error('Error editing item:', error);
+                alert('Terjadi kesalahan saat mengedit item');
+            }
+        }
+
+        // Fungsi untuk menyimpan perubahan
+        async function saveItem(id) {
+            try {
+                const row = document.querySelector(`tr[data-id="${id}"]`);
+                const konsumenInput = row.querySelector('[data-field="hargaJualKonsumen"] input');
+                const lembagaInput = row.querySelector('[data-field="hargaJualLembaga"] input');
+                
+                const newKonsumen = parseInt(konsumenInput.value);
+                const newLembaga = parseInt(lembagaInput.value);
+                
+                if (isNaN(newKonsumen) {
+                    alert('Harga jual konsumen harus berupa angka');
+                    return;
+                }
+                
+                if (isNaN(newLembaga)) {
+                    alert('Harga jual lembaga harus berupa angka');
+                    return;
+                }
+                
+                await warehouseRef.doc(id).update({
+                    hargaJualKonsumen: newKonsumen,
+                    hargaJualLembaga: newLembaga,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                editMode = false;
+                currentEditId = null;
+                originalValues = {};
+                loadWarehouseData();
+                
+            } catch (error) {
+                console.error('Error saving item:', error);
+                alert('Terjadi kesalahan saat menyimpan perubahan');
+            }
+        }
+
+        // Fungsi untuk membatalkan edit
+        function cancelEdit() {
+            if (currentEditId) {
+                editMode = false;
+                loadWarehouseData();
+                currentEditId = null;
+                originalValues = {};
+            }
+        }
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                auth.signOut().then(() => {
+                    window.location.href = 'index.html';
+                }).catch(error => {
+                    console.error('Logout error:', error);
+                    alert('Terjadi kesalahan saat logout');
+                });
+            }
+        });
+
+        // Muat data saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cek status login
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    window.location.href = 'index.html';
+                } else {
+                    // Hitung stok terlebih dahulu
+                    calculateStock();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

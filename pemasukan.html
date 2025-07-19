@@ -567,162 +567,15 @@
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('id-ID', options);
         }
-        
-        // Initialize App
-        function initApp() {
-            // Set tanggal hari ini sebagai default
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('inputTanggal').value = today;
-            
-            // Load data
-            loadGudangData();
-            loadPemasukanData();
-            
-            // Set user name
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    userName.textContent = user.displayName || user.email.split('@')[0];
-                } else {
-                    window.location.href = 'index.html';
-                }
-            });
-        }
-        
-        // Tab switching
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
-                
-                // Show/hide FAB based on active tab
-                fabButton.style.display = tab.dataset.tab === 'pemasukan' ? 'flex' : 'none';
-            });
-        });
-        
-        // Modal handling
-        fabButton.addEventListener('click', () => {
-            inputModal.style.display = 'flex';
-        });
-        
-        closeModal.addEventListener('click', () => {
-            inputModal.style.display = 'none';
-        });
-        
-        cancelBtn.addEventListener('click', () => {
-            inputModal.style.display = 'none';
-        });
-        
-        closeEditModal.addEventListener('click', () => {
-            editHargaModal.style.display = 'none';
-        });
-        
-        cancelEditBtn.addEventListener('click', () => {
-            editHargaModal.style.display = 'none';
-        });
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === inputModal) {
-                inputModal.style.display = 'none';
-            }
-            if (e.target === editHargaModal) {
-                editHargaModal.style.display = 'none';
-            }
-        });
-        
-        // Add item button
-        addItemBtn.addEventListener('click', () => {
-            items.push({
-                namaKitab: '',
-                jumlah: 1,
-                totalBayar: 0
-            });
-            renderItems();
-        });
-        
-        // Render items in form
-        function renderItems() {
-            itemsContainer.innerHTML = `
-                <h3>Item Barang</h3>
-                ${items.map((item, index) => `
-                    <div class="item-row" data-index="${index}">
-                        <div class="form-group">
-                            <label for="itemNamaKitab${index}">Nama Kitab</label>
-                            <input type="text" id="itemNamaKitab${index}" value="${item.namaKitab}" required placeholder="Nama kitab">
-                        </div>
-                        <div class="form-group">
-                            <label for="itemJumlah${index}">Jumlah</label>
-                            <input type="number" id="itemJumlah${index}" value="${item.jumlah}" required placeholder="Jumlah" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="itemTotalBayar${index}">Total Bayar (Rp)</label>
-                            <input type="number" id="itemTotalBayar${index}" value="${item.totalBayar}" required placeholder="Total bayar" min="0">
-                        </div>
-                        <button type="button" class="btn-remove-item" ${items.length === 1 ? 'disabled' : ''}>
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `).join('')}
-            `;
-            
-            // Add event listeners to all remove buttons
-            document.querySelectorAll('.btn-remove-item').forEach((btn, index) => {
-                btn.addEventListener('click', () => {
-                    if (items.length > 1) {
-                        items.splice(index, 1);
-                        renderItems();
-                    }
-                });
-            });
-            
-            // Add event listeners to all inputs
-            items.forEach((item, index) => {
-                const namaKitabInput = document.getElementById(`itemNamaKitab${index}`);
-                const jumlahInput = document.getElementById(`itemJumlah${index}`);
-                const totalBayarInput = document.getElementById(`itemTotalBayar${index}`);
-                
-                namaKitabInput.addEventListener('change', (e) => {
-                    items[index].namaKitab = e.target.value;
-                });
-                
-                jumlahInput.addEventListener('change', (e) => {
-                    items[index].jumlah = parseInt(e.target.value);
-                });
-                
-                totalBayarInput.addEventListener('change', (e) => {
-                    items[index].totalBayar = parseInt(e.target.value);
-                });
-            });
-        }
-        
-        // Save pemasukan data
-        saveBtn.addEventListener('click', async () => {
-            const tanggal = document.getElementById('inputTanggal').value;
-            const toko = document.getElementById('inputToko').value;
-            const keterangan = document.getElementById('inputKeterangan').value;
-            
-            // Validate items
-            let isValid = true;
-            items.forEach(item => {
-                if (!item.namaKitab || !item.jumlah || !item.totalBayar) {
-                    isValid = false;
-                }
-            });
-            
-            if (!isValid) {
-                alert('Harap isi semua field dengan benar');
-                return;
-            }
-            
+
+        // Fungsi untuk menyimpan data pemasukan dan update gudang
+        async function savePemasukanData(tanggal, toko, keterangan, items) {
             try {
-                // Save each item to pemasukan collection
+                // Simpan setiap item ke koleksi pemasukan
                 for (const item of items) {
                     const hargaSatuan = Math.round(item.totalBayar / item.jumlah);
                     
-                    // Add to pemasukan collection
+                    // 1. Simpan ke koleksi pemasukan
                     await db.collection('pemasukan').add({
                         tanggal,
                         toko,
@@ -733,59 +586,31 @@
                         totalBayar: item.totalBayar,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
+
+                    // 2. Update atau buat data di gudang
+                    const gudangRef = db.collection('gudang').doc(item.namaKitab);
                     
-                    // Update or add to gudang collection
-                    const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
-                    const snapshot = await gudangRef.get();
-                    
-                    if (snapshot.empty) {
-                        // Create new document in gudang
-                        await db.collection('gudang').add({
-                            namaBarang: item.namaKitab,
-                            keterangan,
-                            stok: item.jumlah,
-                            hargaBeli: hargaSatuan,
-                            hargaJualLembaga: 0,
-                            hargaJualKonsumen: 0,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    } else {
-                        // Update existing document
-                        snapshot.forEach(async doc => {
-                            await db.collection('gudang').doc(doc.id).update({
-                                stok: firebase.firestore.FieldValue.increment(item.jumlah),
-                                hargaBeli: hargaSatuan,
-                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                        });
-                    }
+                    await gudangRef.set({
+                        namaBarang: item.namaKitab,
+                        keterangan,
+                        stok: firebase.firestore.FieldValue.increment(item.jumlah),
+                        hargaBeli: hargaSatuan,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true }); // Gunakan merge untuk update sebagian
                 }
                 
-                alert('Data pemasukan berhasil disimpan');
-                inputModal.style.display = 'none';
-                loadGudangData();
-                loadPemasukanData();
+                return true;
             } catch (error) {
-                console.error('Error saving data: ', error);
-                alert('Terjadi kesalahan saat menyimpan data');
+                console.error("Error saving data:", error);
+                return false;
             }
-        });
-        
-        // Load gudang data
+        }
+
+        // Fungsi untuk memuat data gudang
         async function loadGudangData() {
             try {
                 const snapshot = await db.collection('gudang').orderBy('namaBarang').get();
                 gudangTable.innerHTML = '';
-                
-                if (snapshot.empty) {
-                    gudangTable.innerHTML = `
-                        <tr>
-                            <td colspan="8" style="text-align: center;">Tidak ada data gudang</td>
-                        </tr>
-                    `;
-                    return;
-                }
                 
                 let counter = 1;
                 snapshot.forEach(doc => {
@@ -808,15 +633,16 @@
                     `;
                 });
                 
-                // Add event listeners to edit buttons
+                // Tambahkan event listener untuk tombol edit
                 document.querySelectorAll('.btn-edit').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const id = e.currentTarget.dataset.id;
                         editHarga(id);
                     });
                 });
+                
             } catch (error) {
-                console.error('Error loading gudang data: ', error);
+                console.error("Error loading gudang data:", error);
                 gudangTable.innerHTML = `
                     <tr>
                         <td colspan="8" style="text-align: center;">Gagal memuat data gudang</td>
@@ -824,21 +650,15 @@
                 `;
             }
         }
-        
-        // Load pemasukan data
+
+        // Fungsi untuk memuat data pemasukan
         async function loadPemasukanData() {
             try {
-                const snapshot = await db.collection('pemasukan').orderBy('createdAt', 'desc').get();
-                pemasukanTable.innerHTML = '';
+                const snapshot = await db.collection('pemasukan')
+                    .orderBy('createdAt', 'desc')
+                    .get();
                 
-                if (snapshot.empty) {
-                    pemasukanTable.innerHTML = `
-                        <tr>
-                            <td colspan="9" style="text-align: center;">Tidak ada data pemasukan</td>
-                        </tr>
-                    `;
-                    return;
-                }
+                pemasukanTable.innerHTML = '';
                 
                 let counter = 1;
                 snapshot.forEach(doc => {
@@ -862,7 +682,7 @@
                     `;
                 });
                 
-                // Add event listeners to delete buttons
+                // Tambahkan event listener untuk tombol delete
                 document.querySelectorAll('.btn-delete').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
@@ -870,16 +690,16 @@
                             try {
                                 await db.collection('pemasukan').doc(id).delete();
                                 loadPemasukanData();
-                                alert('Data berhasil dihapus');
                             } catch (error) {
-                                console.error('Error deleting document: ', error);
+                                console.error("Error deleting document:", error);
                                 alert('Gagal menghapus data');
                             }
                         }
                     });
                 });
+                
             } catch (error) {
-                console.error('Error loading pemasukan data: ', error);
+                console.error("Error loading pemasukan data:", error);
                 pemasukanTable.innerHTML = `
                     <tr>
                         <td colspan="9" style="text-align: center;">Gagal memuat data pemasukan</td>
@@ -887,8 +707,8 @@
                 `;
             }
         }
-        
-        // Edit harga function
+
+        // Fungsi untuk edit harga
         async function editHarga(id) {
             try {
                 const doc = await db.collection('gudang').doc(id).get();
@@ -900,12 +720,45 @@
                     editHargaModal.style.display = 'flex';
                 }
             } catch (error) {
-                console.error('Error getting document: ', error);
+                console.error("Error getting document:", error);
                 alert('Gagal memuat data harga');
             }
         }
-        
-        // Save edited harga
+
+        // Event listener untuk save button
+        saveBtn.addEventListener('click', async () => {
+            const tanggal = document.getElementById('inputTanggal').value;
+            const toko = document.getElementById('inputToko').value;
+            const keterangan = document.getElementById('inputKeterangan').value;
+            
+            // Validasi input
+            if (!tanggal || !toko || !keterangan) {
+                alert('Harap isi semua field utama');
+                return;
+            }
+            
+            // Validasi items
+            for (const item of items) {
+                if (!item.namaKitab || !item.jumlah || !item.totalBayar) {
+                    alert('Harap isi semua field item');
+                    return;
+                }
+            }
+            
+            // Simpan data
+            const success = await savePemasukanData(tanggal, toko, keterangan, items);
+            
+            if (success) {
+                alert('Data berhasil disimpan');
+                inputModal.style.display = 'none';
+                loadGudangData();
+                loadPemasukanData();
+            } else {
+                alert('Gagal menyimpan data');
+            }
+        });
+
+        // Event listener untuk save edit harga
         saveEditBtn.addEventListener('click', async () => {
             if (!currentEditingId) return;
             
@@ -923,13 +776,34 @@
                 editHargaModal.style.display = 'none';
                 loadGudangData();
             } catch (error) {
-                console.error('Error updating document: ', error);
+                console.error("Error updating document:", error);
                 alert('Gagal memperbarui harga');
             }
         });
-        
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Inisialisasi aplikasi
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set tanggal hari ini sebagai default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputTanggal').value = today;
+            
+            // Load data awal
+            loadGudangData();
+            loadPemasukanData();
+            
+            // Setup real-time listener
+            db.collection('gudang').onSnapshot(() => loadGudangData());
+            db.collection('pemasukan').onSnapshot(() => loadPemasukanData());
+            
+            // Setup user auth
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    userName.textContent = user.displayName || user.email.split('@')[0];
+                } else {
+                    window.location.href = 'index.html';
+                }
+            });
+        });
     </script>
 </body>
 </html>

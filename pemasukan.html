@@ -734,30 +734,33 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
-                    // Di fungsi saveBtn.addEventListener('click', ...)
-const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
-const snapshot = await gudangRef.get();
-
-if (snapshot.empty) {
-  // Jika barang belum ada di gudang
-  await db.collection('gudang').add({
-    namaBarang: item.namaKitab,
-    keterangan: document.getElementById('inputKeterangan').value,
-    stok: item.jumlah,
-    hargaBeli: item.hargaSatuan,
-    hargaJualLembaga: 0, // Default value
-    hargaJualKonsumen: 0, // Default value
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-} else {
-  // Jika barang sudah ada
-  snapshot.forEach(async doc => {
-    await db.collection('gudang').doc(doc.id).update({
-      stok: firebase.firestore.FieldValue.increment(item.jumlah),
-      hargaBeli: item.hargaSatuan // Update harga terakhir
-    });
-  });
-}
+                    // Update or add to gudang collection
+                    const gudangRef = db.collection('gudang').where('namaBarang', '==', item.namaKitab);
+                    const snapshot = await gudangRef.get();
+                    
+                    if (snapshot.empty) {
+                        // Create new document in gudang
+                        await db.collection('gudang').add({
+                            namaBarang: item.namaKitab,
+                            keterangan,
+                            stok: item.jumlah,
+                            hargaBeli: hargaSatuan,
+                            hargaJualLembaga: 0,
+                            hargaJualKonsumen: 0,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } else {
+                        // Update existing document
+                        snapshot.forEach(async doc => {
+                            await db.collection('gudang').doc(doc.id).update({
+                                stok: firebase.firestore.FieldValue.increment(item.jumlah),
+                                hargaBeli: hargaSatuan,
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        });
+                    }
+                }
                 
                 alert('Data pemasukan berhasil disimpan');
                 inputModal.style.display = 'none';

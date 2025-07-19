@@ -753,7 +753,8 @@
                     } else {
                         // Update existing document
                         snapshot.forEach(async doc => {
-                            await db.collection('gudang').doc(doc.id).update({
+                            await db.collection('gudang').doc('vE71e2GoJKc5LzdmGcEe
+').update({
                                 stok: firebase.firestore.FieldValue.increment(item.jumlah),
                                 hargaBeli: hargaSatuan,
                                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()

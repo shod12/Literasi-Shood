@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Literasi Shood - Platform Menulis dan Berbagi Karya</title>
+    <title>Login - Literasi Shood</title>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -52,314 +53,240 @@
     <style>
         body {
             font-family: 'Merriweather', serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Playfair Display', serif;
         }
+        .login-container {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+        }
         .quote-transition {
             transition: opacity 0.5s ease-in-out;
         }
-        .slider-item {
-            transition: transform 0.5s ease, opacity 0.5s ease;
+        .btn-primary {
+            transition: all 0.3s ease;
         }
-        .ai-assistant {
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(14, 165, 233, 0.2);
+        }
+        .floating-label {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus ~ .floating-label,
+        .form-input:not(:placeholder-shown) ~ .floating-label {
+            top: -12px;
+            left: 10px;
+            font-size: 0.75rem;
+            background: white;
+            padding: 0 6px;
+            color: #0284c7;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-primary-50 to-secondary-100 min-h-screen">
-    <!-- Header Section -->
-    <header class="bg-white shadow-md">
+<body class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center">
-                <img src="placeholder-logo.svg" alt="Literasi Shood Logo" class="h-12 w-auto">
-                <h1 class="text-2xl font-bold text-primary-800 ml-2">Literasi Shood</h1>
+                <div class="h-12 w-12 rounded-full bg-accent-gold flex items-center justify-center text-white font-bold text-xl">LS</div>
+                <h1 class="text-2xl font-bold text-primary-800 ml-3">Literasi Shood</h1>
             </div>
             <nav class="hidden md:flex space-x-6">
                 <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Beranda</a>
                 <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Karya</a>
                 <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Arkana</a>
-                <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Profil</a>
-                <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Biografi</a>
+                <a href="#" class="text-primary-600 font-semibold">Login</a>
             </nav>
-            <div class="flex items-center space-x-4">
-                <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition">Login</button>
-                <button class="bg-accent-gold text-white px-4 py-2 rounded-lg hover:bg-accent-dark transition">Daftar</button>
-            </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="py-16 px-4">
-        <div class="container mx-auto text-center max-w-3xl">
-            <h2 class="text-4xl md:text-5xl font-bold text-primary-800 mb-6">Selamat Datang di Dunia Kata</h2>
-            <p class="text-xl text-secondary-600 mb-8 italic">
-                "Di sini, setiap huruf memiliki jiwa, setiap kata memiliki cerita, 
-                dan setiap kalimat adalah perjalanan menuju pemahaman yang lebih dalam."
-            </p>
-            <div class="bg-white p-6 rounded-xl shadow-lg mb-10">
-                <p id="motivation-quote" class="text-lg text-secondary-700 quote-transition">
-                    "Menulislah, karena ada suara yang hanya bisa terdengar melalui goresan pena."
-                </p>
-            </div>
-            <div class="flex flex-col md:flex-row justify-center gap-4">
-                <button class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition">
-                    Jelajahi Karya
-                </button>
-                <button class="border-2 border-primary-600 text-primary-600 px-6 py-3 rounded-lg hover:bg-primary-50 transition">
-                    Mulai Menulis
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Ulama Slider Section -->
-    <section class="py-12 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-primary-800 mb-10">Teladan Ilmu dan Akhlak</h2>
-            <div class="relative overflow-hidden">
-                <div class="flex transition-transform duration-500 ease-in-out" id="ulama-slider">
-                    <!-- Ulama items will be populated by JavaScript -->
-                </div>
-                <button class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md" id="slider-prev">
-                    &lt;
-                </button>
-                <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md" id="slider-next">
-                    &gt;
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Reflective Questions Section -->
-    <section class="py-16 bg-primary-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-primary-800 mb-10">Renungan Pengetahuan</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
-                    <h3 class="text-xl font-semibold text-primary-700 mb-3">Apa yang membuat sebuah karya abadi?</h3>
-                    <p class="text-secondary-600">Karya yang lahir dari ketulusan akan selalu menemukan jalannya sendiri menuju keabadian.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
-                    <h3 class="text-xl font-semibold text-primary-700 mb-3">Bagaimana kata-kata mengubah dunia?</h3>
-                    <p class="text-secondary-600">Dengan satu kata, seseorang bisa mengubah pemikiran; dengan pemikiran, seseorang bisa mengubah dunia.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
-                    <h3 class="text-xl font-semibold text-primary-700 mb-3">Mengapa kita perlu berbagi cerita?</h3>
-                    <p class="text-secondary-600">Setiap cerita yang dibagikan adalah jembatan yang menghubungkan pengalaman manusia yang universal.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Login/Register Section -->
-    <section class="py-16">
-        <div class="container mx-auto px-4 max-w-md">
-            <div class="bg-white p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl font-bold text-center text-primary-800 mb-6">Masuk ke Akun Anda</h2>
-                <form class="space-y-4">
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-secondary-700">Email</label>
-                        <input type="email" id="email" class="mt-1 block w-full px-3 py-2 border border-secondary-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4">
+        <div class="container max-w-5xl mx-auto">
+            <div class="login-container bg-white flex flex-col md:flex-row rounded-xl overflow-hidden">
+                <!-- Illustration Section -->
+                <div class="md:w-2/5 bg-gradient-to-br from-primary-600 to-primary-800 text-white p-8 flex flex-col justify-center">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold mb-4">Selamat Datang Kembali</h2>
+                        <p class="opacity-90">Masuk ke akun Anda untuk melanjutkan petualangan menulis</p>
                     </div>
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-secondary-700">Password</label>
-                        <input type="password" id="password" class="mt-1 block w-full px-3 py-2 border border-secondary-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    <div class="hidden md:block">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffffff' d='M18 22q-1.25 0-2.125-.875T15 19q0-.175.025-.363t.075-.337l-7.05-4.1q-.425.375-.95.588T6 15q-1.25 0-2.125-.875T3 12q0-1.25.875-2.125T6 9q.575 0 1.1.213t.95.587l7.05-4.1q-.05-.15-.075-.337T15 5q0-1.25.875-2.125T18 2q1.25 0 2.125.875T21 5q0 1.25-.875 2.125T18 8q-.575 0-1.1-.212t-.95-.588L8.9 11.3q.05.15.075.338T9 12q0 .175-.025.363T8.9 12.7l7.05 4.1q.425-.375.95-.587T18 16q1.25 0 2.125.875T21 19q0 1.25-.875 2.125T18 22zm0-16q.425 0 .713-.288T19 5q0-.425-.288-.713T18 4q-.425 0-.713.288T17 5q0 .425.288.713T18 6zM6 13q.425 0 .713-.288T7 12q0-.425-.288-.713T6 11q-.425 0-.713.288T5 12q0 .425.288.713T6 13zm12 7q.425 0 .713-.288T19 19q0-.425-.288-.713T18 18q-.425 0-.713.288T17 19q0 .425.288.713T18 20zm0-15q.425 0 .713-.288T19 5q0-.425-.288-.713T18 4q-.425 0-.713.288T17 5q0 .425.288.713T18 6zM6 13q.425 0 .713-.288T7 12q0-.425-.288-.713T6 11q-.425 0-.713.288T5 12q0 .425.288.713T6 13zm12 7q.425 0 .713-.288T19 19q0-.425-.288-.713T18 18q-.425 0-.713.288T17 19q0 .425.288.713T18 20z'/%3E%3C/svg%3E" alt="Writing Illustration" class="w-48 h-48 mx-auto opacity-80">
                     </div>
-                    <div>
-                        <button type="submit" class="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                            Masuk
+                    <div class="mt-8 text-center">
+                        <p class="text-sm opacity-80">"Kata-kata adalah jendela jiwa, tulisan adalah pintunya."</p>
+                    </div>
+                </div>
+                
+                <!-- Login Form Section -->
+                <div class="md:w-3/5 p-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-primary-800">Masuk ke Akun</h2>
+                        <p class="text-secondary-600">Gunakan kredensial Anda untuk mengakses platform</p>
+                    </div>
+                    
+                    <form class="space-y-6">
+                        <div class="relative">
+                            <input type="email" id="email" class="form-input w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none peer" placeholder=" ">
+                            <label for="email" class="floating-label absolute left-4 top-3 text-secondary-500 pointer-events-none">Alamat Email</label>
+                            <div class="absolute right-3 top-3 text-primary-600">
+                                <i class="far fa-envelope"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <input type="password" id="password" class="form-input w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none peer" placeholder=" ">
+                            <label for="password" class="floating-label absolute left-4 top-3 text-secondary-500 pointer-events-none">Kata Sandi</label>
+                            <div class="absolute right-3 top-3 text-primary-600">
+                                <i class="far fa-eye-slash cursor-pointer" id="togglePassword"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="remember" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-secondary-300 rounded">
+                                <label for="remember" class="ml-2 block text-sm text-secondary-700">Ingat saya</label>
+                            </div>
+                            <a href="#" class="text-sm text-primary-600 hover:text-primary-800">Lupa kata sandi?</a>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            Masuk Sekarang
                         </button>
-                    </div>
-                </form>
-                <div class="mt-6">
-                    <div class="relative">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-secondary-300"></div>
-                        </div>
-                        <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-secondary-500">Atau</span>
-                        </div>
-                    </div>
+                    </form>
+                    
                     <div class="mt-6">
-                        <button class="w-full inline-flex justify-center items-center px-4 py-2 border border-green-600 shadow-sm text-sm font-medium rounded-md text-green-700 bg-white hover:bg-green-50 focus:outline-none">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.867-.273 0-.42.463-.619.463-.198 0-.54-.581-.866-.581-.326 0-.654.321-.654.646 0 .334.389.607.692.783.355.205.731.354 1.102.484.436.152.874.298 1.354.298.48 0 .914-.146 1.354-.298.371-.13.747-.279 1.102-.484.303-.176.692-.449.692-.783 0-.325-.328-.646-.654-.646-.326 0-.668.581-.866.581-.198 0-.346-.463-.619-.463-.272 0-1.733.718-2.03.867zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
-                            </svg>
-                            Daftar dengan WhatsApp
-                        </button>
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-secondary-300"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-white text-secondary-500">Atau masuk dengan</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 grid grid-cols-2 gap-3">
+                            <button class="w-full inline-flex justify-center items-center px-4 py-2 border border-secondary-300 shadow-sm text-sm font-medium rounded-md text-secondary-700 bg-white hover:bg-secondary-50 focus:outline-none">
+                                <i class="fab fa-google text-red-500 mr-2"></i>
+                                Google
+                            </button>
+                            <button class="w-full inline-flex justify-center items-center px-4 py-2 border border-green-600 shadow-sm text-sm font-medium rounded-md text-green-700 bg-white hover:bg-green-50 focus:outline-none">
+                                <i class="fab fa-whatsapp text-green-500 mr-2"></i>
+                                WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-secondary-600">
+                            Belum punya akun?
+                            <a href="#" class="font-medium text-primary-600 hover:text-primary-500">Daftar di sini</a>
+                        </p>
+                    </div>
+
+                    <!-- Demo Credentials -->
+                    <div class="mt-8 p-4 bg-primary-50 rounded-lg border border-primary-200">
+                        <h3 class="font-semibold text-primary-800 mb-2">Login Demo (Untuk Testing):</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <p class="text-primary-700"><span class="font-medium">Admin:</span></p>
+                                <p>Email: <span class="select-all">alieshood1119@gmail.com</span></p>
+                                <p>Password: <span class="select-all">123123!</span></p>
+                            </div>
+                            <div>
+                                <p class="text-primary-700"><span class="font-medium">User:</span></p>
+                                <p>Email: <span class="select-all">user@literasishood.id</span></p>
+                                <p>Password: <span class="select-all">User123!</span></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <p class="mt-6 text-center text-sm text-secondary-600">
-                    Belum punya akun?
-                    <a href="#" class="font-medium text-primary-600 hover:text-primary-500">Daftar di sini</a>
-                </p>
             </div>
         </div>
-    </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-secondary-800 text-white py-12">
+    <footer class="bg-secondary-800 text-white py-8 mt-12">
         <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Literasi Shood</h3>
-                    <p class="text-secondary-300">Platform untuk berbagi karya tulis dengan sistem moderasi yang menjaga kualitas konten.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Tautan Cepat</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Tentang Kami</a></li>
-                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Kebijakan Privasi</a></li>
-                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Syarat dan Ketentuan</a></li>
-                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Kontak</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Ikuti Kami</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-secondary-300 hover:text-white transition">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </a>
-                        <a href="#" class="text-secondary-300 hover:text-white transition">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.033 10.033 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                        </a>
-                        <a href="#" class="text-secondary-300 hover:text-white transition">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 5.523 4.477 10 10 10s10-4.477 10-10c0-5.523-4.477-10-10-10zm3.7 14.077c-1.75.362-5.453.362-7.203 0-1.896-.391-2.117-1.538-2.246-2.077-.02-.086-.029-.176-.029-.265v-2.97c0-.182.108-.35.27-.431l2.5-1.423c.094-.055.204-.055.298 0l2.5 1.423c.161.081.27.25.27.431v2.97c0 .089-.009.179-.029.265-.056.244-.172.642-1.017.898.26.432.908 1.01 1.746 1.45 1.703.888 3.642.888 4.057.888.416 0 2.354 0 4.057-.888.838-.44 1.486-1.018 1.746-1.45-.845-.256-.961-.654-1.017-.898-.02-.086-.029-.176-.029-.265v-2.97c0-.182.108-.35.27-.431l2.5-1.423c.094-.055.204-.055.298 0l2.5 1.423c.161.081.27.25.27.431v2.97c0 .089-.009.179-.029.265-.129.539-.35 1.686-2.246 2.077z"/></svg>
-                        </a>
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-full bg-accent-gold flex items-center justify-center text-white font-bold text-sm">LS</div>
+                        <h2 class="text-xl font-bold ml-2">Literasi Shood</h2>
                     </div>
+                    <p class="text-secondary-300 mt-2 text-sm">Platform menulis dengan sistem moderasi terbaik</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-secondary-300 hover:text-white transition">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-secondary-300 hover:text-white transition">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-secondary-300 hover:text-white transition">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-secondary-300 hover:text-white transition">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
                 </div>
             </div>
-            <div class="border-t border-secondary-700 mt-8 pt-8 text-sm text-center text-secondary-400">
+            <div class="border-t border-secondary-700 mt-6 pt-6 text-sm text-center text-secondary-400">
                 <p>© 2023 Literasi Shood. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- AI Assistant FAB -->
-    <div id="ai-assistant" class="fixed bottom-6 right-6 w-14 h-14 bg-accent-gold rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-accent-dark transition ai-assistant">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-        </svg>
-    </div>
-
     <script>
-        // Motivational quotes rotation
-        const quotes = [
-            "Menulislah, karena ada suara yang hanya bisa terdengar melalui goresan pena.",
-            "Kata-kata adalah jendela jiwa, tulisan adalah pintunya.",
-            "Sebuah karya lahir ketika hati dan pikiran bertemu dalam keselarasan.",
-            "Jangan takut salah dalam menulis, karena dari kesalahan itu lahir pelajaran berharga.",
-            "Setiap penulis besar pernah menjadi pemula yang tak kenal menyerah."
-        ];
-        
-        let quoteIndex = 0;
-        const quoteElement = document.getElementById('motivation-quote');
-        
-        setInterval(() => {
-            quoteIndex = (quoteIndex + 1) % quotes.length;
-            quoteElement.style.opacity = 0;
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
             
-            setTimeout(() => {
-                quoteElement.textContent = quotes[quoteIndex];
-                quoteElement.style.opacity = 1;
-            }, 500);
-        }, 5000);
-        
-        // Ulama slider data
-        const ulamaData = [
-            {
-                name: "Imam Al-Ghazali",
-                bio: "Ahli teologi dan filsuf Islam Persia yang dikenal sebagai Hujjatul Islam.",
-                image: "placeholder-ulama.jpg"
-            },
-            {
-                name: "Buya Hamka",
-                bio: "Ulama dan sastrawan Indonesia, penulis Tafsir Al-Azhar.",
-                image: "placeholder-ulama.jpg"
-            },
-            {
-                name: "Imam Syafi'i",
-                bio: "Pendiri mazhab Syafi'i, ahli fiqih dan ushul fiqih.",
-                image: "placeholder-ulama.jpg"
-            },
-            {
-                name: "KH Ahmad Dahlan",
-                bio: "Pendiri Muhammadiyah, pelopor pendidikan modern Islam.",
-                image: "placeholder-ulama.jpg"
+            // Toggle icon
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                alert('Harap isi email dan kata sandi');
+                return;
             }
-        ];
-        
-        const slider = document.getElementById('ulama-slider');
-        let currentSlide = 0;
-        
-        // Initialize slider
-        function initSlider() {
-            ulamaData.forEach((ulama, index) => {
-                const slide = document.createElement('div');
-                slide.className = `min-w-full md:min-w-1/2 lg:min-w-1/3 px-4 slider-item ${index !== 0 ? 'opacity-50 scale-90' : ''}`;
-                slide.innerHTML = `
-                    <div class="bg-white rounded-xl overflow-hidden shadow-md">
-                        <img src="${ulama.image}" alt="${ulama.name}" class="w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-xl font-semibold text-primary-800">${ulama.name}</h3>
-                            <p class="text-secondary-600 mt-2">${ulama.bio}</p>
-                            <button class="mt-4 text-primary-600 hover:text-primary-800 font-medium">Baca selengkapnya</button>
-                        </div>
-                    </div>
-                `;
-                slider.appendChild(slide);
-            });
-        }
-        
-        // Navigation for slider
-        document.getElementById('slider-next').addEventListener('click', () => {
-            navigateSlider(1);
-        });
-        
-        document.getElementById('slider-prev').addEventListener('click', () => {
-            navigateSlider(-1);
-        });
-        
-        function navigateSlider(direction) {
-            const slides = document.querySelectorAll('.slider-item');
-            slides.forEach(slide => {
-                slide.classList.add('opacity-50', 'scale-90');
-            });
             
-            currentSlide = (currentSlide + direction + ulamaData.length) % ulamaData.length;
+            // Simulate successful login
+            alert('Login berhasil! Redirecting...');
             
-            slides[currentSlide].classList.remove('opacity-50', 'scale-90');
-            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-        }
-        
-        // AI Assistant behavior
-        const aiAssistant = document.getElementById('ai-assistant');
-        let assistantTimeout;
-        
-        function hideAssistant() {
-            aiAssistant.style.opacity = '0.5';
-            aiAssistant.style.transform = 'scale(0.95)';
-        }
-        
-        function showAssistant() {
-            aiAssistant.style.opacity = '1';
-            aiAssistant.style.transform = 'scale(1)';
-            clearTimeout(assistantTimeout);
-            assistantTimeout = setTimeout(hideAssistant, 5000);
-        }
-        
-        aiAssistant.addEventListener('mouseenter', showAssistant);
-        aiAssistant.addEventListener('click', () => {
-            showAssistant();
-            // Here would be the code to open the AI assistant modal
-            alert('AI Assistant akan terbuka di sini');
+            // Here you would typically redirect to dashboard
+            // window.location.href = '/dashboard';
         });
-        
-        // Initialize on load
-        window.addEventListener('load', () => {
-            initSlider();
-            assistantTimeout = setTimeout(hideAssistant, 5000);
+
+        // Demo credentials auto-fill
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.select-all')) {
+                const text = e.target.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = e.target.textContent;
+                    e.target.textContent = 'Copied!';
+                    setTimeout(() => {
+                        e.target.textContent = originalText;
+                    }, 1500);
+                });
+            }
         });
     </script>
 </body>

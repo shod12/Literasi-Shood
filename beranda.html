@@ -3,1036 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Literasi - Beranda</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Literasi Shood - Platform Menulis dan Berbagi Karya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#fafafa',
+                            100: '#f4f4f5',
+                            200: '#e4e4e7',
+                            300: '#d4d4d8',
+                            400: '#a1a1aa',
+                            500: '#71717a',
+                            600: '#52525b',
+                            700: '#3f3f46',
+                            800: '#27272a',
+                            900: '#18181b',
+                        },
+                        accent: {
+                            gold: '#d4af37',
+                            light: '#fef3c7',
+                            dark: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        body: ['Merriweather', 'serif'],
+                        heading: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Global Styles */
-        :root {
-            --primary: #2c3e50;
-            --secondary: #34495e;
-            --accent: #3498db;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --text: #333;
-            --text-light: #6c757d;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --whatsapp: #25D366;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Merriweather', serif;
-            color: var(--text);
-            line-height: 1.6;
-            background-color: white;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
-
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: var(--dark);
+            font-family: 'Playfair Display', serif;
         }
-
-        a {
-            text-decoration: none;
-            color: inherit;
+        .quote-transition {
+            transition: opacity 0.5s ease-in-out;
         }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .slider-item {
+            transition: transform 0.5s ease, opacity 0.5s ease;
         }
-
-        /* Header Styles */
-        header {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo {
-            font-family: 'Poppins', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo i {
-            color: var(--accent);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            position: relative;
-        }
-
-        .nav-links > li > a {
-            padding: 10px 15px;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .nav-links > li > a:hover {
-            color: var(--accent);
-        }
-
-        .nav-links > li > a.active {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: white;
-            min-width: 200px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-radius: 5px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-
-        .nav-links li:hover .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .dropdown-menu li a {
-            padding: 10px 15px;
-            display: block;
-            transition: all 0.3s;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .dropdown-menu li a:hover {
-            background-color: var(--light);
-            color: var(--accent);
-            padding-left: 20px;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .btn-primary {
-            background-color: var(--accent);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2185d0;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--accent);
-            color: white;
-        }
-
-        .btn-whatsapp {
-            background-color: var(--whatsapp);
-            color: white;
-        }
-
-        .btn-whatsapp:hover {
-            background-color: #128C7E;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        .hamburger {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Main Content */
-        main {
-            flex: 1;
-            padding: 40px 0;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, rgba(44,62,80,0.9) 0%, rgba(52,73,94,0.9) 100%), url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
-            color: white;
-            padding: 100px 0;
-            text-align: center;
-            border-radius: 10px;
-            margin-bottom: 40px;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            opacity: 0.9;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-title h2 {
-            font-size: 2.2rem;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 15px;
-        }
-
-        .section-title h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background-color: var(--accent);
-        }
-
-        /* Cards Grid */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-
-        .card-image {
-            height: 200px;
-            background-color: #eee;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        .card-category {
-            display: inline-block;
-            background-color: var(--light);
-            color: var(--accent);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .card-meta {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        .card p {
-            margin-bottom: 15px;
-            color: var(--text-light);
-        }
-
-        .card-link {
-            display: inline-flex;
-            align-items: center;
-            color: var(--accent);
-            font-weight: 500;
-        }
-
-        .card-link i {
-            margin-left: 5px;
-            transition: transform 0.3s;
-        }
-
-        .card-link:hover i {
-            transform: translateX(5px);
-        }
-
-        /* Registration Form */
-        .registration-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            border-color: var(--accent);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
-        }
-
-        .form-submit {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        /* Protected Content */
-        .protected-content {
-            text-align: center;
-            padding: 60px 0;
-        }
-
-        .protected-content i {
-            font-size: 4rem;
-            color: var(--accent);
-            margin-bottom: 20px;
-        }
-
-        .protected-content h2 {
-            margin-bottom: 20px;
-        }
-
-        .protected-content p {
-            max-width: 600px;
-            margin: 0 auto 30px;
-            color: var(--text-light);
-        }
-
-        /* Login Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-light);
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .modal-header h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        .modal-form .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .modal-form .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .modal-form .form-group input {
-            width: 100%;
-            padding: 12px 15px 12px 40px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
-        }
-
-        .modal-form .form-group input:focus {
-            border-color: var(--accent);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 15px;
-            top: 40px;
-            color: var(--text-light);
-        }
-
-        .show-password {
-            position: absolute;
-            right: 15px;
-            top: 40px;
-            color: var(--text-light);
-            cursor: pointer;
-        }
-
-        .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-        }
-
-        .remember-me input {
-            margin-right: 8px;
-        }
-
-        .forgot-password {
-            color: var(--accent);
-            font-size: 0.9rem;
-        }
-
-        .modal-footer {
-            text-align: center;
-            margin-top: 20px;
-            color: var(--text-light);
-        }
-
-        .modal-footer a {
-            color: var(--accent);
-            font-weight: 500;
-        }
-
-        /* Admin Controls */
-        .admin-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: flex-end;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 40px 0 20px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column h3 {
-            color: white;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-
-        .footer-column p {
-            opacity: 0.8;
-            margin-bottom: 15px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            color: white;
-            transition: all 0.3s;
-        }
-
-        .social-links a:hover {
-            background-color: var(--accent);
-            transform: translateY(-3px);
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-
-        .footer-links a:hover {
-            opacity: 1;
-            color: var(--accent);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-
-        .github-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: white;
-        }
-
-        .github-link:hover {
-            color: var(--accent);
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            .hero h1 {
-                font-size: 2.4rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .nav-links {
-                flex-direction: column;
-                align-items: center;
-                display: none;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .dropdown-menu {
-                position: static;
-                opacity: 1;
-                visibility: visible;
-                box-shadow: none;
-                width: 100%;
-            }
-
-            .auth-buttons {
-                margin-top: 20px;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
-            .hero {
-                padding: 80px 0;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-
-            .section-title h2 {
-                font-size: 1.8rem;
-            }
-
-            .registration-form {
-                padding: 30px 20px;
-            }
+        .ai-assistant {
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
     </style>
 </head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-container">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-book-open"></i> Portal Literasi
-                </a>
-                
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="index.html" class="active"><i class="fas fa-home"></i> Beranda</a></li>
-                    <li>
-                        <a href="#"><i class="fas fa-book"></i> Karya Tulis <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="novel.html">Novel</a></li>
-                            <li><a href="puisi.html">Puisi</a></li>
-                            <li><a href="qolb.html">Qolb</a></li>
-                            <li><a href="catatan.html">Catatan Penting</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fas fa-graduation-cap"></i> Materi Formal <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="#">Matematika <i class="fas fa-chevron-right"></i></a>
-                                <ul class="dropdown-menu nested">
-                                    <li><a href="matematika-10.html">Kelas 10</a></li>
-                                    <li><a href="matematika-11.html">Kelas 11</a></li>
-                                    <li><a href="matematika-12.html">Kelas 12</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Fisika <i class="fas fa-chevron-right"></i></a>
-                                <ul class="dropdown-menu nested">
-                                    <li><a href="fisika-10.html">Kelas 10</a></li>
-                                    <li><a href="fisika-11.html">Kelas 11</a></li>
-                                    <li><a href="fisika-12.html">Kelas 12</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Bahasa Jawa <i class="fas fa-chevron-right"></i></a>
-                                <ul class="dropdown-menu nested">
-                                    <li><a href="jawa-7.html">Kelas 7</a></li>
-                                    <li><a href="jawa-8.html">Kelas 8</a></li>
-                                    <li><a href="jawa-9.html">Kelas 9</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><a href="biografi.html"><i class="fas fa-user"></i> Biografi</a></li>
-                </ul>
-                
-                <div class="auth-buttons">
-                    <button class="btn btn-outline" id="login-btn"><i class="fas fa-sign-in-alt"></i> Masuk</button>
-                    <button class="btn btn-primary" id="register-btn"><i class="fas fa-user-plus"></i> Daftar</button>
-                </div>
-                
-                <div class="hamburger" id="hamburger">
-                    <i class="fas fa-bars"></i>
-                </div>
+<body class="bg-gradient-to-br from-primary-50 to-secondary-100 min-h-screen">
+    <!-- Header Section -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="placeholder-logo.svg" alt="Literasi Shood Logo" class="h-12 w-auto">
+                <h1 class="text-2xl font-bold text-primary-800 ml-2">Literasi Shood</h1>
+            </div>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Beranda</a>
+                <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Karya</a>
+                <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Arkana</a>
+                <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Profil</a>
+                <a href="#" class="text-secondary-700 hover:text-primary-600 transition">Biografi</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition">Login</button>
+                <button class="bg-accent-gold text-white px-4 py-2 rounded-lg hover:bg-accent-dark transition">Daftar</button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h1>Selamat Datang di Portal Literasi</h1>
-                <p>Temukan koleksi karya tulis dan materi pembelajaran yang bermanfaat untuk mengembangkan pengetahuan dan kreativitas Anda.</p>
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <a href="#karya" class="btn btn-primary">Jelajahi Karya</a>
-                    <a href="#register" class="btn btn-outline">Daftar Anggota</a>
-                </div>
+    <!-- Hero Section -->
+    <section class="py-16 px-4">
+        <div class="container mx-auto text-center max-w-3xl">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary-800 mb-6">Selamat Datang di Dunia Kata</h2>
+            <p class="text-xl text-secondary-600 mb-8 italic">
+                "Di sini, setiap huruf memiliki jiwa, setiap kata memiliki cerita, 
+                dan setiap kalimat adalah perjalanan menuju pemahaman yang lebih dalam."
+            </p>
+            <div class="bg-white p-6 rounded-xl shadow-lg mb-10">
+                <p id="motivation-quote" class="text-lg text-secondary-700 quote-transition">
+                    "Menulislah, karena ada suara yang hanya bisa terdengar melalui goresan pena."
+                </p>
             </div>
-        </section>
-
-        <section id="karya" class="section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Karya Terbaru</h2>
-                    <p>Koleksi karya tulis terbaru dari berbagai kategori</p>
-                </div>
-                
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');"></div>
-                        <div class="card-content">
-                            <span class="card-category">Novel</span>
-                            <h3>Senja di Ujung Ramadan</h3>
-                            <div class="card-meta">
-                                <span><i class="far fa-calendar-alt"></i> 15 Jan 2023</span>
-                                <span><i class="far fa-user"></i> Admin</span>
-                            </div>
-                            <p>Sebuah kisah tentang pencarian spiritual di bulan suci yang penuh makna.</p>
-                            <a href="novel-senja.html" class="card-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');"></div>
-                        <div class="card-content">
-                            <span class="card-category">Puisi</span>
-                            <h3>Kumpulan Puisi Hati</h3>
-                            <div class="card-meta">
-                                <span><i class="far fa-calendar-alt"></i> 5 Mar 2023</span>
-                                <span><i class="far fa-user"></i> Admin</span>
-                            </div>
-                            <p>Ekspresi perasaan dalam rangkaian kata yang indah dan penuh makna.</p>
-                            <a href="puisi-hati.html" class="card-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');"></div>
-                        <div class="card-content">
-                            <span class="card-category">Catatan Penting</span>
-                            <h3>Dasar-Dasar Nahwu</h3>
-                            <div class="card-meta">
-                                <span><i class="far fa-calendar-alt"></i> 20 Apr 2023</span>
-                                <span><i class="far fa-user"></i> Admin</span>
-                            </div>
-                            <p>Panduan lengkap memahami struktur dasar bahasa Arab dengan pendekatan praktis.</p>
-                            <a href="nahwu-dasar.html" class="card-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="register" class="section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Daftar Menjadi Anggota</h2>
-                    <p>Bergabunglah dengan komunitas kami untuk mendapatkan akses ke lebih banyak konten</p>
-                </div>
-                
-                <div class="registration-form">
-                    <form id="registrationForm">
-                        <div class="form-group">
-                            <label for="nama">Nama Lengkap</label>
-                            <input type="text" id="nama" name="nama" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="kelas">Kelas/Jurusan</label>
-                            <input type="text" id="kelas" name="kelas" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Alamat Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
-                        </div>
-                        
-                        <div class="form-submit">
-                            <button type="button" id="whatsapp-btn" class="btn btn-whatsapp">
-                                <i class="fab fa-whatsapp"></i> Hubungi Admin via WhatsApp
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeLoginModal">&times;</span>
-            <div class="modal-header">
-                <h2>Masuk ke Akun Anda</h2>
-                <p>Silakan masuk untuk mengakses konten eksklusif</p>
-            </div>
-            
-            <form class="modal-form" id="loginForm">
-                <div class="form-group">
-                    <label for="login-email">Alamat Email</label>
-                    <input type="email" id="login-email" name="email" required>
-                    <i class="fas fa-envelope input-icon"></i>
-                </div>
-                
-                <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" required>
-                    <i class="fas fa-lock input-icon"></i>
-                    <span class="show-password" id="showLoginPassword"><i class="fas fa-eye"></i></span>
-                </div>
-                
-                <div class="form-options">
-                    <div class="remember-me">
-                        <input type="checkbox" id="remember" name="remember">
-                        <label for="remember">Ingat saya</label>
-                    </div>
-                    <a href="#" class="forgot-password">Lupa password?</a>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Masuk</button>
-            </form>
-            
-            <div class="modal-footer">
-                <p>Belum punya akun? <a href="#" id="register-link">Daftar sekarang</a></p>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <button class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition">
+                    Jelajahi Karya
+                </button>
+                <button class="border-2 border-primary-600 text-primary-600 px-6 py-3 rounded-lg hover:bg-primary-50 transition">
+                    Mulai Menulis
+                </button>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Tentang Portal Literasi</h3>
-                    <p>Portal Literasi adalah platform untuk berbagi pengetahuan dan karya tulis dalam berbagai bidang ilmu dan sastra.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
+    <!-- Ulama Slider Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-primary-800 mb-10">Teladan Ilmu dan Akhlak</h2>
+            <div class="relative overflow-hidden">
+                <div class="flex transition-transform duration-500 ease-in-out" id="ulama-slider">
+                    <!-- Ulama items will be populated by JavaScript -->
                 </div>
-                
-                <div class="footer-column">
-                    <h3>Tautan Cepat</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html">Beranda</a></li>
-                        <li><a href="karya-tulis.html">Karya Tulis</a></li>
-                        <li><a href="materi-formal.html">Materi Formal</a></li>
-                        <li><a href="biografi.html">Biografi</a></li>
-                    </ul>
+                <button class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md" id="slider-prev">
+                    &lt;
+                </button>
+                <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md" id="slider-next">
+                    &gt;
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reflective Questions Section -->
+    <section class="py-16 bg-primary-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-primary-800 mb-10">Renungan Pengetahuan</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                    <h3 class="text-xl font-semibold text-primary-700 mb-3">Apa yang membuat sebuah karya abadi?</h3>
+                    <p class="text-secondary-600">Karya yang lahir dari ketulusan akan selalu menemukan jalannya sendiri menuju keabadian.</p>
                 </div>
-                
-                <div class="footer-column">
-                    <h3>Kontak Kami</h3>
-                    <p><i class="fas fa-envelope"></i> info@portalliterasi.com</p>
-                    <p><i class="fas fa-phone"></i> +62 123 4567 890</p>
-                    <p><i class="fab fa-whatsapp"></i> +62 812 3456 7890</p>
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                    <h3 class="text-xl font-semibold text-primary-700 mb-3">Bagaimana kata-kata mengubah dunia?</h3>
+                    <p class="text-secondary-600">Dengan satu kata, seseorang bisa mengubah pemikiran; dengan pemikiran, seseorang bisa mengubah dunia.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                    <h3 class="text-xl font-semibold text-primary-700 mb-3">Mengapa kita perlu berbagi cerita?</h3>
+                    <p class="text-secondary-600">Setiap cerita yang dibagikan adalah jembatan yang menghubungkan pengalaman manusia yang universal.</p>
                 </div>
             </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2023 Portal Literasi. All rights reserved. 
-                    <a href="https://github.com/username/portal-literasi" class="github-link" target="_blank">
-                        <i class="fab fa-github"></i> Lihat di GitHub
-                    </a>
+        </div>
+    </section>
+
+    <!-- Login/Register Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 max-w-md">
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold text-center text-primary-800 mb-6">Masuk ke Akun Anda</h2>
+                <form class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-secondary-700">Email</label>
+                        <input type="email" id="email" class="mt-1 block w-full px-3 py-2 border border-secondary-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-secondary-700">Password</label>
+                        <input type="password" id="password" class="mt-1 block w-full px-3 py-2 border border-secondary-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            Masuk
+                        </button>
+                    </div>
+                </form>
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-secondary-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-secondary-500">Atau</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button class="w-full inline-flex justify-center items-center px-4 py-2 border border-green-600 shadow-sm text-sm font-medium rounded-md text-green-700 bg-white hover:bg-green-50 focus:outline-none">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.867-.273 0-.42.463-.619.463-.198 0-.54-.581-.866-.581-.326 0-.654.321-.654.646 0 .334.389.607.692.783.355.205.731.354 1.102.484.436.152.874.298 1.354.298.48 0 .914-.146 1.354-.298.371-.13.747-.279 1.102-.484.303-.176.692-.449.692-.783 0-.325-.328-.646-.654-.646-.326 0-.668.581-.866.581-.198 0-.346-.463-.619-.463-.272 0-1.733.718-2.03.867zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                            </svg>
+                            Daftar dengan WhatsApp
+                        </button>
+                    </div>
+                </div>
+                <p class="mt-6 text-center text-sm text-secondary-600">
+                    Belum punya akun?
+                    <a href="#" class="font-medium text-primary-600 hover:text-primary-500">Daftar di sini</a>
                 </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-secondary-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Literasi Shood</h3>
+                    <p class="text-secondary-300">Platform untuk berbagi karya tulis dengan sistem moderasi yang menjaga kualitas konten.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Tautan Cepat</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Tentang Kami</a></li>
+                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Syarat dan Ketentuan</a></li>
+                        <li><a href="#" class="text-secondary-300 hover:text-white transition">Kontak</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Ikuti Kami</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-secondary-300 hover:text-white transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="#" class="text-secondary-300 hover:text-white transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.033 10.033 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                        <a href="#" class="text-secondary-300 hover:text-white transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 5.523 4.477 10 10 10s10-4.477 10-10c0-5.523-4.477-10-10-10zm3.7 14.077c-1.75.362-5.453.362-7.203 0-1.896-.391-2.117-1.538-2.246-2.077-.02-.086-.029-.176-.029-.265v-2.97c0-.182.108-.35.27-.431l2.5-1.423c.094-.055.204-.055.298 0l2.5 1.423c.161.081.27.25.27.431v2.97c0 .089-.009.179-.029.265-.056.244-.172.642-1.017.898.26.432.908 1.01 1.746 1.45 1.703.888 3.642.888 4.057.888.416 0 2.354 0 4.057-.888.838-.44 1.486-1.018 1.746-1.45-.845-.256-.961-.654-1.017-.898-.02-.086-.029-.176-.029-.265v-2.97c0-.182.108-.35.27-.431l2.5-1.423c.094-.055.204-.055.298 0l2.5 1.423c.161.081.27.25.27.431v2.97c0 .089-.009.179-.029.265-.129.539-.35 1.686-2.246 2.077z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-secondary-700 mt-8 pt-8 text-sm text-center text-secondary-400">
+                <p>© 2023 Literasi Shood. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
+    <!-- AI Assistant FAB -->
+    <div id="ai-assistant" class="fixed bottom-6 right-6 w-14 h-14 bg-accent-gold rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-accent-dark transition ai-assistant">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+        </svg>
+    </div>
+
     <script>
-        // Simpan data admin (untuk demo saja, di production gunakan backend)
-        const ADMIN_EMAIL = "admin@portalliterasi.com";
-        const ADMIN_PASSWORD = "admin123";
+        // Motivational quotes rotation
+        const quotes = [
+            "Menulislah, karena ada suara yang hanya bisa terdengar melalui goresan pena.",
+            "Kata-kata adalah jendela jiwa, tulisan adalah pintunya.",
+            "Sebuah karya lahir ketika hati dan pikiran bertemu dalam keselarasan.",
+            "Jangan takut salah dalam menulis, karena dari kesalahan itu lahir pelajaran berharga.",
+            "Setiap penulis besar pernah menjadi pemula yang tak kenal menyerah."
+        ];
         
-        // DOM Elements
-        const navLinks = document.getElementById('navLinks');
-        const hamburger = document.getElementById('hamburger');
-        const loginBtn = document.getElementById('login-btn');
-        const registerBtn = document.getElementById('register-btn');
-        const loginModal = document.getElementById('loginModal');
-        const closeLoginModal = document.getElementById('closeLoginModal');
-        const loginForm = document.getElementById('loginForm');
-        const showLoginPassword = document.getElementById('showLoginPassword');
-        const registerLink = document.getElementById('register-link');
-        const whatsappBtn = document.getElementById('whatsapp-btn');
-        const registrationForm = document.getElementById('registrationForm');
+        let quoteIndex = 0;
+        const quoteElement = document.getElementById('motivation-quote');
         
-        // Check if user is logged in
-        function checkLogin() {
-            return localStorage.getItem('isLoggedIn') === 'true';
+        setInterval(() => {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            quoteElement.style.opacity = 0;
+            
+            setTimeout(() => {
+                quoteElement.textContent = quotes[quoteIndex];
+                quoteElement.style.opacity = 1;
+            }, 500);
+        }, 5000);
+        
+        // Ulama slider data
+        const ulamaData = [
+            {
+                name: "Imam Al-Ghazali",
+                bio: "Ahli teologi dan filsuf Islam Persia yang dikenal sebagai Hujjatul Islam.",
+                image: "placeholder-ulama.jpg"
+            },
+            {
+                name: "Buya Hamka",
+                bio: "Ulama dan sastrawan Indonesia, penulis Tafsir Al-Azhar.",
+                image: "placeholder-ulama.jpg"
+            },
+            {
+                name: "Imam Syafi'i",
+                bio: "Pendiri mazhab Syafi'i, ahli fiqih dan ushul fiqih.",
+                image: "placeholder-ulama.jpg"
+            },
+            {
+                name: "KH Ahmad Dahlan",
+                bio: "Pendiri Muhammadiyah, pelopor pendidikan modern Islam.",
+                image: "placeholder-ulama.jpg"
+            }
+        ];
+        
+        const slider = document.getElementById('ulama-slider');
+        let currentSlide = 0;
+        
+        // Initialize slider
+        function initSlider() {
+            ulamaData.forEach((ulama, index) => {
+                const slide = document.createElement('div');
+                slide.className = `min-w-full md:min-w-1/2 lg:min-w-1/3 px-4 slider-item ${index !== 0 ? 'opacity-50 scale-90' : ''}`;
+                slide.innerHTML = `
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md">
+                        <img src="${ulama.image}" alt="${ulama.name}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-primary-800">${ulama.name}</h3>
+                            <p class="text-secondary-600 mt-2">${ulama.bio}</p>
+                            <button class="mt-4 text-primary-600 hover:text-primary-800 font-medium">Baca selengkapnya</button>
+                        </div>
+                    </div>
+                `;
+                slider.appendChild(slide);
+            });
         }
         
-        // Update UI based on login status
-        function updateUI() {
-            if (checkLogin()) {
-                loginBtn.textContent = 'Admin Panel';
-                loginBtn.innerHTML = '<i class="fas fa-cog"></i> Admin Panel';
-                loginBtn.onclick = function() {
-                    window.location.href = 'admin-panel.html';
-                };
-                registerBtn.style.display = 'none';
-            } else {
-                loginBtn.textContent = 'Masuk';
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
-                loginBtn.onclick = function() {
-                    loginModal.style.display = 'flex';
-                };
-                registerBtn.style.display = 'inline-block';
-            }
+        // Navigation for slider
+        document.getElementById('slider-next').addEventListener('click', () => {
+            navigateSlider(1);
+        });
+        
+        document.getElementById('slider-prev').addEventListener('click', () => {
+            navigateSlider(-1);
+        });
+        
+        function navigateSlider(direction) {
+            const slides = document.querySelectorAll('.slider-item');
+            slides.forEach(slide => {
+                slide.classList.add('opacity-50', 'scale-90');
+            });
+            
+            currentSlide = (currentSlide + direction + ulamaData.length) % ulamaData.length;
+            
+            slides[currentSlide].classList.remove('opacity-50', 'scale-90');
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
         }
         
-        // Toggle mobile menu
-        hamburger.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
+        // AI Assistant behavior
+        const aiAssistant = document.getElementById('ai-assistant');
+        let assistantTimeout;
+        
+        function hideAssistant() {
+            aiAssistant.style.opacity = '0.5';
+            aiAssistant.style.transform = 'scale(0.95)';
+        }
+        
+        function showAssistant() {
+            aiAssistant.style.opacity = '1';
+            aiAssistant.style.transform = 'scale(1)';
+            clearTimeout(assistantTimeout);
+            assistantTimeout = setTimeout(hideAssistant, 5000);
+        }
+        
+        aiAssistant.addEventListener('mouseenter', showAssistant);
+        aiAssistant.addEventListener('click', () => {
+            showAssistant();
+            // Here would be the code to open the AI assistant modal
+            alert('AI Assistant akan terbuka di sini');
         });
         
-        // Show/hide password
-        showLoginPassword.addEventListener('click', function() {
-            const passwordInput = document.getElementById('login-password');
-            const icon = this.querySelector('i');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-        
-        // Login form submission
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            
-            // Simple validation (in real app, use backend authentication)
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                localStorage.setItem('isLoggedIn', 'true');
-                alert('Login berhasil! Anda sekarang masuk sebagai admin.');
-                loginModal.style.display = 'none';
-                updateUI();
-            } else {
-                alert('Email atau password salah!');
-            }
-        });
-        
-        // Close modal
-        closeLoginModal.addEventListener('click', function() {
-            loginModal.style.display = 'none';
-        });
-        
-        // Click outside modal to close
-        window.addEventListener('click', function(e) {
-            if (e.target === loginModal) {
-                loginModal.style.display = 'none';
-            }
-        });
-        
-        // Register link in modal
-        registerLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            loginModal.style.display = 'none';
-            window.location.href = '#register';
-        });
-        
-        // WhatsApp registration button
-        whatsappBtn.addEventListener('click', function() {
-            const nama = document.getElementById('nama').value || '[Nama]';
-            const kelas = document.getElementById('kelas').value || '[Kelas]';
-            const email = document.getElementById('email').value || '[Email]';
-            const password = document.getElementById('password').value || '[Password]';
-            
-            const message = `Halo Admin, saya ingin mendaftar sebagai anggota Portal Literasi:%0A%0ANama: ${nama}%0AKelas: ${kelas}%0AEmail: ${email}%0APassword: ${password}`;
-            
-            window.open(`https://wa.me/6281234567890?text=${message}`, '_blank');
-        });
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            updateUI();
+        // Initialize on load
+        window.addEventListener('load', () => {
+            initSlider();
+            assistantTimeout = setTimeout(hideAssistant, 5000);
         });
     </script>
 </body>

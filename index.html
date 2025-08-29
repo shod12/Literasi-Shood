@@ -7,7 +7,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "literasi-shood.firebaseapp.com",
+            databaseURL: "https://literasi-shood-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "literasi-shood",
+            storageBucket: "literasi-shood.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
         tailwind.config = {
             theme: {
                 extend: {
@@ -66,16 +86,6 @@
             border-radius: 16px;
             overflow: hidden;
         }
-        .quote-transition {
-            transition: opacity 0.5s ease-in-out;
-        }
-        .btn-primary {
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(14, 165, 233, 0.2);
-        }
         .floating-label {
             transition: all 0.3s ease;
         }
@@ -87,6 +97,14 @@
             background: white;
             padding: 0 6px;
             color: #0284c7;
+        }
+        .modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .modal.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
         }
     </style>
 </head>
@@ -132,9 +150,9 @@
                         <p class="text-secondary-600">Gunakan kredensial Anda untuk mengakses platform</p>
                     </div>
                     
-                    <form class="space-y-6">
+                    <form id="login-form" class="space-y-6">
                         <div class="relative">
-                            <input type="email" id="email" class="form-input w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none peer" placeholder=" ">
+                            <input type="email" id="email" class="form-input w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none peer" placeholder=" " value="admin@literasishood.id">
                             <label for="email" class="floating-label absolute left-4 top-3 text-secondary-500 pointer-events-none">Alamat Email</label>
                             <div class="absolute right-3 top-3 text-primary-600">
                                 <i class="far fa-envelope"></i>
@@ -142,7 +160,7 @@
                         </div>
                         
                         <div class="relative">
-                            <input type="password" id="password" class="form-input w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none peer" placeholder=" ">
+                            <input type="password" id="password" class="form-input w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none peer" placeholder=" " value="Admin123!">
                             <label for="password" class="floating-label absolute left-4 top-3 text-secondary-500 pointer-events-none">Kata Sandi</label>
                             <div class="absolute right-3 top-3 text-primary-600">
                                 <i class="far fa-eye-slash cursor-pointer" id="togglePassword"></i>
@@ -157,7 +175,7 @@
                             <a href="#" class="text-sm text-primary-600 hover:text-primary-800">Lupa kata sandi?</a>
                         </div>
                         
-                        <button type="submit" class="btn-primary w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <button type="submit" class="w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition">
                             Masuk Sekarang
                         </button>
                     </form>
@@ -190,39 +208,29 @@
                             <a href="#" class="font-medium text-primary-600 hover:text-primary-500">Daftar di sini</a>
                         </p>
                     </div>
-    
-    <!-- Footer -->
-    <footer class="bg-secondary-800 text-white py-8 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <div class="flex items-center">
-                        <div class="h-8 w-8 rounded-full bg-accent-gold flex items-center justify-center text-white font-bold text-sm">LS</div>
-                        <h2 class="text-xl font-bold ml-2">Literasi Shood</h2>
-                    </div>
-                    <p class="text-secondary-300 mt-2 text-sm">Platform menulis dengan sistem moderasi terbaik</p>
-                </div>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-secondary-300 hover:text-white transition">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="text-secondary-300 hover:text-white transition">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="text-secondary-300 hover:text-white transition">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="text-secondary-300 hover:text-white transition">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="border-t border-secondary-700 mt-6 pt-6 text-sm text-center text-secondary-400">
-                <p>© 2023 Literasi Shood. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
 
+                    
+
+    <!-- Redirect Modal -->
+    <div id="redirect-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Login Berhasil!</h3>
+            <p class="text-gray-600 mb-4">Anda akan diarahkan ke halaman dashboard dalam <span id="countdown">3</span> detik</p>
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                <div id="progress-bar" class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <p class="text-sm text-gray-500 mb-1">Role: <span id="role-display">Admin</span></p>
+            <p class="text-sm text-gray-500">Redirect ke: <span id="redirect-url" class="font-mono">/admin/dashboard</span></p>
+            <button id="go-now-btn" class="w-full mt-6 bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition">
+                Lanjutkan Sekarang
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase Auth State Listener -->
     <script>
         // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
@@ -235,23 +243,58 @@
             this.classList.toggle('fa-eye-slash');
         });
 
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
+        // Firebase Auth State Observer
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                console.log("User logged in:", user.email);
+                
+                // Check user role in database
+                database.ref('users/' + user.uid).once('value').then((snapshot) => {
+                    const userData = snapshot.val();
+                    const role = userData ? userData.role : 'user';
+                    
+                    // Redirect based on role
+                    if (role === 'admin') {
+                        window.location.href = '/admin/dashboard.html';
+                    } else {
+                        window.location.href = '/dashboard.html';
+                    }
+                });
+            } else {
+                // User is signed out
+                console.log("User not logged in");
+            }
+        });
+
+        // Form submission and redirect logic
+        document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
             
             if (!email || !password) {
                 alert('Harap isi email dan kata sandi');
                 return;
             }
             
-            // Simulate successful login
-            alert('Login berhasil! Redirecting...');
-            
-            // Here you would typically redirect to dashboard
-            // window.location.href = 'dashboard';
+            // Sign in with Firebase Auth
+            auth.setPersistence(remember ? 
+                firebase.auth.Auth.Persistence.LOCAL : 
+                firebase.auth.Auth.Persistence.SESSION)
+            .then(() => {
+                return auth.signInWithEmailAndPassword(email, password);
+            })
+            .then((userCredential) => {
+                // Signed in successfully - the onAuthStateChanged listener will handle redirect
+                console.log("User signed in:", userCredential.user.email);
+            })
+            .catch((error) => {
+                console.error("Error signing in:", error);
+                alert('Login gagal: ' + error.message);
+            });
         });
 
         // Demo credentials auto-fill

@@ -27,7 +27,127 @@ const firebaseConfig = {
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
-        
+        // Fungsi Registrasi Pengguna
+function registerUser(email, password, name, role = 'user') {
+  // Validasi input
+  if (!validateEmail(email) || !validatePassword(password)) {
+    alert('Email atau password tidak valid');
+    return false;
+  }
+  
+  if (!validateField(name)) {
+    alert('Nama tidak boleh kosong');
+    return false;
+  }
+  
+  // Buat user dengan email dan password
+  auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      
+      // Simpan data tambahan user ke database
+      return database.ref('users/' + user.uid).set({
+        name: name,
+        email: email,
+        role: role,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
+      });
+    })
+    .then(() => {
+      console.log("User registered successfully");
+      alert('Pendaftaran berhasil!');
+      
+      // Redirect ke halaman dashboard
+      window.location.href = 'dashboard.html';
+    })
+    .catch((error) => {
+      console.error("Error registering user:", error);
+      alert("Pendaftaran gagal: " + error.message);
+    });
+}
+
+// Fungsi Login
+function loginUser(email, password) {
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      
+      // Update last login
+      database.ref('users/' + user.uid).update({
+        lastLogin: new Date().toISOString()
+      });
+      
+      // Redirect ke dashboard
+      window.location.href = 'dashboard.html';
+    })
+    .catch((error) => {
+      console.error("Error signing in:", error);
+      alert("Login gagal: " + error.message);
+    });
+}
+// Fungsi Logout
+function logoutUser() {
+  auth.signOut()
+    .then(() => {
+      window.location.href = 'index.html';
+    })
+    .catch((error) => {
+      console.error("Error signing out:", error);
+    });
+}
+
+// Fungsi Validasi
+function validateEmail(email) {
+  const expression = /^[^@]+@\w+(\.\w+)+\w$/;
+  return expression.test(email);
+}
+
+function validatePassword(password) {
+  return password.length >= 6;
+}
+
+function validateField(field) {
+  return field && field.length > 0;
+}
+
+// Fungsi Login dengan Google
+function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      const user = result.user;
+      
+      // Cek apakah user sudah terdaftar di database
+      return database.ref('users/' + user.uid).once('value')
+        .then((snapshot) => {
+          if (!snapshot.exists()) {
+            // Jika user baru, simpan data ke database
+            return database.ref('users/' + user.uid).set({
+              name: user.displayName,
+              email: user.email,
+              role: 'user',
+              createdAt: new Date().toISOString(),
+              lastLogin: new Date().toISOString(),
+              profileImage: user.photoURL
+            });
+          } else {
+            // Update last login untuk user yang sudah ada
+            return database.ref('users/' + user.uid).update({
+              lastLogin: new Date().toISOString()
+            });
+          }
+        });
+    })
+    .then(() => {
+      window.location.href = 'dashboard.html';
+    })
+    .catch((error) => {
+      console.error("Error with Google sign-in:", error);
+      alert("Login dengan Google gagal: " + error.message);
+    });
+}
         tailwind.config = {
             theme: {
                 extend: {
